@@ -172,6 +172,83 @@ textarea {
   overflow-y: auto;
 }
 
+/* Topics */
+
+.topic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0 var(--space-2) var(--space-2);
+  list-style: none;
+}
+
+.topic-list__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  border-radius: var(--radius-control);
+  transition: background-color var(--motion);
+}
+
+.topic-list__item:hover {
+  background: var(--surface-hover);
+}
+
+.topic-list__item--selected,
+.topic-list__item--selected:hover {
+  background: var(--surface-selected);
+}
+
+.topic-list__item--selected::before {
+  content: "";
+  position: absolute;
+  top: var(--space-2);
+  bottom: var(--space-2);
+  left: 0;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.topic-list__select {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  height: 40px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.topic-list__item--selected .topic-list__select {
+  font-weight: 500;
+}
+
+.topic-list__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topic-list__count {
+  color: var(--text-muted);
+  font-size: var(--text-secondary);
+}
+
+.topic-list__actions {
+  display: flex;
+  padding-right: var(--space-1);
+}
+
 /* Buttons */
 
 .button {
@@ -313,6 +390,17 @@ textarea.field__control {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dialog__error {
+  color: var(--danger);
+  font-size: var(--text-secondary);
 }
 
 .dialog__actions {

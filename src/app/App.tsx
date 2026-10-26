@@ -1,26 +1,27 @@
 import {
   FileText,
   FolderPlus,
-  Folders,
   KeyRound,
   Lock,
   TriangleAlert,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { countEntries, sortTopics } from "../lib/catalog";
+import type { StoredCatalog, Topic } from "../lib/model";
 import type { CatalogRepository, LoadResult } from "../storage/repository";
 import { Button } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
 import { ToastProvider } from "./components/Toast";
 import { Header } from "./Header";
 import { Pane } from "./Pane";
+import { DeleteTopicDialog, TopicNameDialog } from "./TopicDialogs";
+import { TopicsPane } from "./TopicsPane";
 
 interface AppProps {
   repository: CatalogRepository;
-  // Creating topics arrives with the topics pane (task 3.2)
-  onCreateTopic?: () => void;
 }
 
-export function App({ repository, onCreateTopic }: AppProps) {
+export function App({ repository }: AppProps) {
   const [state, setState] = useState<LoadResult | null>(null);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export function App({ repository, onCreateTopic }: AppProps) {
     <ToastProvider>
       <div className="app">
         <Header />
-        <Workspace state={state} onCreateTopic={onCreateTopic} />
+        <Workspace state={state} repository={repository} />
       </div>
     </ToastProvider>
   );
@@ -52,10 +53,10 @@ export function App({ repository, onCreateTopic }: AppProps) {
 
 function Workspace({
   state,
-  onCreateTopic,
+  repository,
 }: {
   state: LoadResult | null;
-  onCreateTopic?: () => void;
+  repository: CatalogRepository;
 }) {
   // Nothing is shown while loading so the welcome state does not flash
   if (!state) return <main className="workspace workspace--single" />;
@@ -72,33 +73,112 @@ function Workspace({
     );
   }
 
-  if (state.catalog.topics.length === 0) {
-    return (
-      <main className="workspace workspace--single">
-        <Welcome onCreateTopic={onCreateTopic} />
-      </main>
-    );
-  }
+  return <Catalog catalog={state.catalog} repository={repository} />;
+}
+
+type TopicDialog =
+  | { kind: "create" }
+  | { kind: "rename"; topic: Topic }
+  | { kind: "delete"; topic: Topic };
+
+function Catalog({
+  catalog,
+  repository,
+}: {
+  catalog: StoredCatalog;
+  repository: CatalogRepository;
+}) {
+  const [selectedId, setSelectedId] = useState<string>();
+  // A dialog stays mounted while closing so the browser can return focus;
+  // a new key per opening resets its form
+  const [dialog, setDialog] = useState<{
+    value: TopicDialog;
+    open: boolean;
+    key: number;
+  }>();
+
+  const topics = useMemo(() => sortTopics(catalog.topics), [catalog.topics]);
+  const entryCounts = useMemo(
+    () =>
+      new Map(
+        topics.map((topic) => [topic.id, countEntries(catalog, topic.id)]),
+      ),
+    [catalog, topics],
+  );
+  // A topic deleted here or in another tab falls back to the first one
+  const selected = topics.find((topic) => topic.id === selectedId) ?? topics[0];
+
+  const open = (value: TopicDialog) =>
+    setDialog((current) => ({
+      value,
+      open: true,
+      key: (current?.key ?? 0) + 1,
+    }));
+  const close = () =>
+    setDialog((current) => current && { ...current, open: false });
 
   return (
-    <main className="workspace">
-      <Pane title="Topics">
-        <EmptyState icon={Folders} text="Topics will appear here." />
-      </Pane>
-      <Pane title="Entries">
-        <EmptyState icon={KeyRound} text="Select a topic to see its entries." />
-      </Pane>
-      <Pane title="Details">
-        <EmptyState
-          icon={FileText}
-          text="Select an entry to see its details."
-        />
-      </Pane>
-    </main>
+    <>
+      {topics.length === 0 ? (
+        <main className="workspace workspace--single">
+          <Welcome onCreateTopic={() => open({ kind: "create" })} />
+        </main>
+      ) : (
+        <main className="workspace">
+          <TopicsPane
+            topics={topics}
+            entryCounts={entryCounts}
+            selectedId={selected?.id}
+            onSelect={setSelectedId}
+            onCreate={() => open({ kind: "create" })}
+            onRename={(topic) => open({ kind: "rename", topic })}
+            onDelete={(topic) => open({ kind: "delete", topic })}
+          />
+          <Pane title="Entries">
+            <EmptyState
+              icon={KeyRound}
+              text="Select a topic to see its entries."
+            />
+          </Pane>
+          <Pane title="Details">
+            <EmptyState
+              icon={FileText}
+              text="Select an entry to see its details."
+            />
+          </Pane>
+        </main>
+      )}
+      {dialog &&
+        (dialog.value.kind === "delete" ? (
+          <DeleteTopicDialog
+            key={dialog.key}
+            open={dialog.open}
+            repository={repository}
+            topic={dialog.value.topic}
+            entryCount={entryCounts.get(dialog.value.topic.id) ?? 0}
+            onDone={close}
+            onCancel={close}
+          />
+        ) : (
+          <TopicNameDialog
+            key={dialog.key}
+            open={dialog.open}
+            repository={repository}
+            topic={
+              dialog.value.kind === "rename" ? dialog.value.topic : undefined
+            }
+            onDone={(topicId) => {
+              setSelectedId(topicId);
+              close();
+            }}
+            onCancel={close}
+          />
+        ))}
+    </>
   );
 }
 
-function Welcome({ onCreateTopic }: { onCreateTopic?: () => void }) {
+function Welcome({ onCreateTopic }: { onCreateTopic: () => void }) {
   return (
     <section className="empty-state" aria-labelledby="welcome-title">
       <FolderPlus size={32} />
@@ -108,12 +188,7 @@ function Welcome({ onCreateTopic }: { onCreateTopic?: () => void }) {
       <p className="empty-state__text">
         Group the websites you use into topics, with their sign-in details.
       </p>
-      <Button
-        variant="primary"
-        icon={FolderPlus}
-        disabled={!onCreateTopic}
-        onClick={onCreateTopic}
-      >
+      <Button variant="primary" icon={FolderPlus} onClick={onCreateTopic}>
         Create topic
       </Button>
       <p className="welcome__note">

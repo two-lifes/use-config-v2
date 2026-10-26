@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–2 are done (C1, C2 closed); 3.1 is done. The next task is 3.2.
+Status: stages 1–2 are done (C1, C2 closed); 3.1–3.2 are done. The next task is 3.3.
 
 ## Rules
 
@@ -70,7 +70,7 @@ Status: stages 1–2 are done (C1, C2 closed); 3.1 is done. The next task is 3.2
   light and dark themes, buttons, inputs, dialog, toast, empty state, icons
   (D-15); app shell with header and three panes; welcome state and plaintext
   note (US-01).
-- [ ] 3.2. Topics pane: create, rename, delete with entry count confirmation,
+- [x] 3.2. Topics pane: create, rename, delete with entry count confirmation,
   selection, sorting, validation messages (US-02).
 - [ ] 3.3. Entries pane and details: list with favicons and letter avatars,
   details view, add and edit form with validation, delete, move, unsaved

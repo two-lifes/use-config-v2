@@ -22,10 +22,9 @@ test("first run shows the welcome state with the plaintext note", async ({
   await expect(
     page.getByRole("heading", { name: "Welcome to Use Config" }),
   ).toBeVisible();
-  // Creating topics is wired up with the topics pane (task 3.2)
   await expect(
     page.getByRole("button", { name: "Create topic" }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(
     page.getByText("Your data is stored unencrypted in this browser profile."),
   ).toBeVisible();
