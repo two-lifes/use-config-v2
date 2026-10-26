@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import * as operations from "../lib/catalog";
 import { createCatalogRepository, type TestHook } from "../storage/repository";
 import { App } from "./App";
+import "./styles.css";
 
 const root = document.getElementById("root");
 if (!root) {
@@ -19,6 +20,6 @@ const repository = createCatalogRepository();
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <App repository={repository} />
   </StrictMode>,
 );

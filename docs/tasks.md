@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–2 are done (C1, C2 closed). The next task is 3.1.
+Status: stages 1–2 are done (C1, C2 closed); 3.1 is done. The next task is 3.2.
 
 ## Rules
 
@@ -66,7 +66,7 @@ Status: stages 1–2 are done (C1, C2 closed). The next task is 3.1.
 
 ## 3. Interface
 
-- [ ] 3.1. Design tokens and base components from [design.md](design.md):
+- [x] 3.1. Design tokens and base components from [design.md](design.md):
   light and dark themes, buttons, inputs, dialog, toast, empty state, icons
   (D-15); app shell with header and three panes; welcome state and plaintext
   note (US-01).

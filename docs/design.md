@@ -27,7 +27,8 @@ Components use only tokens, never raw colors.
 | `--surface` | `#ffffff` | `#1a1a1d` | Panes, cards, dialogs |
 | `--surface-hover` | `#f1f1f3` | `#232327` | Hovered list items |
 | `--surface-selected` | `#eef0ff` | `#262a4a` | Selected list item |
-| `--border` | `#e4e4e8` | `#2c2c31` | Dividers, inputs |
+| `--border` | `#e4e4e8` | `#2c2c31` | Dividers, pane and dialog outlines |
+| `--border-input` | `#8a8a94` | `#6c6c76` | Input and secondary button outlines (3:1 for UI components) |
 | `--text` | `#18181b` | `#ededf0` | Primary text |
 | `--text-muted` | `#63636e` | `#a0a0ab` | Secondary text, labels |
 | `--accent` | `#4f46e5` | `#8b85ff` | Primary buttons, links, focus |
@@ -87,7 +88,7 @@ implementing and adjust the values if needed.
   (text only, for row and toolbar actions), danger (danger text or fill in
   confirmations). Height 32 px; icon buttons 32 × 32 px with a tooltip
   (`title`) and an `aria-label`.
-- **Inputs**: height 34 px, border `--border`, focus ring 2 px `--accent`.
+- **Inputs**: height 34 px, border `--border-input`, focus ring 2 px `--accent`.
   Labels above fields; inline error text below in `--danger`. Textareas grow
   with content up to 12 lines.
 - **List items**: 40 px rows (topics) and 48 px rows (entries with name and
