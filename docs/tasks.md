@@ -4,7 +4,8 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stage 1 is done (C1 closed). The next task is 2.1.
+Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
+2.2.
 
 ## Rules
 
@@ -44,7 +45,7 @@ Status: stage 1 is done (C1 closed). The next task is 2.1.
 
 ## 2. Data
 
-- [ ] 2.1. Model and validation in `src/lib`: types, field rules and limits from
+- [x] 2.1. Model and validation in `src/lib`: types, field rules and limits from
   [data schema v1](technical.md#data-schema-v1), URL rules, topic name
   uniqueness; unit tests.
 - [ ] 2.2. Pure catalog operations: create, rename and delete topics (cascade),

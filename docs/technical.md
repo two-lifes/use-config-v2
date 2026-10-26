@@ -119,8 +119,11 @@ Validation rules (shared by loading, saving and import):
 | Description, 2FA note | At most 10,000 characters. Line breaks kept. |
 | IDs | Non-empty strings, unique within their collection. |
 
-These limits are proposed with this design and can be changed in the task that
-implements validation.
+Lengths are counted in Unicode code points, so an emoji counts as one
+character. Loading and import require stored values to be in their stored form
+already (for example, a name with surrounding spaces is a problem, not trimmed
+silently); unknown properties are ignored and dropped. Implemented in
+`src/lib/model.ts` and `src/lib/validation.ts`.
 
 A missing `catalog` key means an empty catalog. Any other value that fails
 validation is an invalid state (D-11): it is not overwritten, and the UI offers
