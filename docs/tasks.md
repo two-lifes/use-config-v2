@@ -5,7 +5,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [design.md](design.md).
 
 Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
-2.2.
+2.3.
 
 ## Rules
 
@@ -48,7 +48,7 @@ Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
 - [x] 2.1. Model and validation in `src/lib`: types, field rules and limits from
   [data schema v1](technical.md#data-schema-v1), URL rules, topic name
   uniqueness; unit tests.
-- [ ] 2.2. Pure catalog operations: create, rename and delete topics (cascade),
+- [x] 2.2. Pure catalog operations: create, rename and delete topics (cascade),
   add, edit, delete and move entries, sorting, search (D-10); unit tests.
 - [ ] 2.3. Storage repository in `src/storage`: load with validation, empty
   catalog on a missing key, invalid-state detection without overwriting (D-11),

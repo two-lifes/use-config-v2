@@ -125,6 +125,13 @@ already (for example, a name with surrounding spaces is a problem, not trimmed
 silently); unknown properties are ignored and dropped. Implemented in
 `src/lib/model.ts` and `src/lib/validation.ts`.
 
+Catalog operations, sorting and search are pure functions in
+`src/lib/catalog.ts`; they receive new IDs and the current time from the caller.
+Topics and entries are sorted by name with a fixed `en` collation that ignores
+case and orders numbers naturally ("Item 2" before "Item 10"), then by ID.
+Search trims the query; an empty query matches nothing. Results are sorted by
+entry name, then topic name.
+
 A missing `catalog` key means an empty catalog. Any other value that fails
 validation is an invalid state (D-11): it is not overwritten, and the UI offers
 a raw export of the stored value.
