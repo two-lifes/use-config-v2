@@ -142,16 +142,25 @@ version 1 exists and no migration code is written.
 
 ## Storage repository
 
-- `load()` reads and validates the catalog.
-- Every change is one operation applied as read-modify-write: read the latest
-  stored catalog, apply the pure operation from `src/lib`, validate, write. This
-  keeps unrelated changes from other tabs; for the same entry the last write
-  wins (US-12). Operations within one tab are serialized through a queue.
-- `subscribe()` uses `chrome.storage.onChanged` to refresh the UI when another
-  tab changes data.
+Implemented in `src/storage/repository.ts`.
+
+- `load()` reads and validates the catalog. The result is `ok` with the
+  catalog (an empty one when the key is missing), `invalid` with the raw stored
+  value and the problems found (D-11), or `error` when reading fails.
+- `update(operation)` applies one pure operation from `src/lib` as
+  read-modify-write: read the latest stored catalog, apply the operation,
+  validate, write. This keeps unrelated changes from other tabs; for the same
+  entry the last write wins (US-12). Updates run under one Web Lock
+  (`navigator.locks`), which all pages of the extension share, so changes from
+  the same tab and from different tabs are applied one after another.
+- An invalid stored catalog is never written over: `update` returns an
+  `invalid-state` error and leaves the stored value as it is (D-11).
+- `subscribe()` uses `chrome.storage.local.onChanged` to refresh the UI when
+  another tab changes data; the listener receives the same result as `load()`.
 - Write errors (for example, the 10 MB `chrome.storage.local` quota, which
-  counts the JSON of every value) are returned to the UI as a failed result;
-  the in-memory state is not updated.
+  counts the JSON of every value) are returned to the UI as a failed result
+  (`write-failed`); the stored catalog and the in-memory state are not
+  changed.
 - No `unlimitedStorage` permission: the catalog is expected to be far below
   10 MB.
 
@@ -190,6 +199,8 @@ version 1 exists and no migration code is written.
   taken from the service worker URL. Tests open
   `chrome-extension://<id>/index.html` and cover every story in
   [user-stories.md](user-stories.md).
+- The tab page exposes the storage repository and the catalog operations as
+  `globalThis.useConfigTest`; storage tests call them through `page.evaluate`.
 - The toolbar click cannot be simulated directly; the service worker exposes its
   open-or-focus function, and the test calls it through `serviceWorker.evaluate`.
 - Clipboard tests grant `clipboard-read` and `clipboard-write` to the test

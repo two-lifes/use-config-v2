@@ -5,7 +5,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [design.md](design.md).
 
 Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
-2.3.
+2.4.
 
 ## Rules
 
@@ -50,7 +50,7 @@ Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
   uniqueness; unit tests.
 - [x] 2.2. Pure catalog operations: create, rename and delete topics (cascade),
   add, edit, delete and move entries, sorting, search (D-10); unit tests.
-- [ ] 2.3. Storage repository in `src/storage`: load with validation, empty
+- [x] 2.3. Storage repository in `src/storage`: load with validation, empty
   catalog on a missing key, invalid-state detection without overwriting (D-11),
   queued read-modify-write operations, `onChanged` subscription, write error
   results; end-to-end tests through the extension page (US-11 storage part,
