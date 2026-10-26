@@ -1,7 +1,7 @@
 # Technical Design
 
 Requirements: [product.md](product.md). Decisions: [decisions.md](decisions.md).
-This document describes the intended design; nothing is implemented yet.
+This document describes the intended design.
 Library APIs must be checked against current documentation (Context7) when
 implementing, not taken from this document or from memory.
 
