@@ -180,12 +180,19 @@ Implemented in `src/storage/repository.ts`.
 - File name: `use-config-YYYY-MM-DD.json` (local date), UTF-8, indented with two
   spaces. Downloaded through a `Blob` and an `<a download>` link; no
   `downloads` permission.
-- Import limit: 10 MB file size.
-- Import rejects the whole file when: it is not JSON; `format` differs;
-  `schemaVersion` is not 1 (newer versions get a separate message); any field
-  fails validation; IDs repeat; an entry references a missing topic; topic names
-  repeat. The message names the first problems found (at most 5).
+- Import limit: 10 MB file size (10 × 1024 × 1024 bytes, like the
+  `chrome.storage.local` quota). The UI checks the file size before reading it;
+  the parser also checks the UTF-8 size of the text.
+- Import rejects the whole file when: it is larger than the limit; it is not
+  JSON; `format` differs; `schemaVersion` is not 1 (an integer above 1 gets a
+  separate newer-version message); `exportedAt` is not an ISO 8601 UTC
+  timestamp; any field fails validation; IDs repeat; an entry references a
+  missing topic; topic names repeat. These checks run in this order, and each
+  of the first four stops the import with its own message. Validation problems
+  are counted, and the message names the first problems found (at most 5).
 - A valid import replaces the stored catalog in one write.
+- Serialization, the file name and import parsing are pure functions in
+  `src/lib/backup.ts`; the caller passes the export time.
 
 ## Testing
 

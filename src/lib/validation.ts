@@ -155,7 +155,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isTimestamp(value: string): boolean {
+export function isTimestamp(value: string): boolean {
   return (
     !Number.isNaN(Date.parse(value)) && new Date(value).toISOString() === value
   );

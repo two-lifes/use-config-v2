@@ -4,8 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
-2.4.
+Status: stages 1–2 are done (C1, C2 closed). The next task is 3.1.
 
 ## Rules
 
@@ -55,12 +54,15 @@ Status: stage 1 is done (C1 closed); stage 2 is in progress. The next task is
   queued read-modify-write operations, `onChanged` subscription, write error
   results; end-to-end tests through the extension page (US-11 storage part,
   US-12 data part).
-- [ ] 2.4. Export file format in `src/lib`: serialization and import parsing
+- [x] 2.4. Export file format in `src/lib`: serialization and import parsing
   with complete validation and messages (at most 5 problems), size limit,
   newer-version message; unit tests including an export/import round trip.
 
-- [ ] **C2:** all data rules from [technical.md](technical.md) are covered by
+- [x] **C2:** all data rules from [technical.md](technical.md) are covered by
   passing unit tests, and the storage repository works in the built extension.
+  Closed 2026-10-26: Linux (WSL2), Node.js 24.22.1, Playwright 1.64.1 with its
+  bundled Chromium 156 (headless); `npm run check` passed (typecheck, lint,
+  format check, 68 unit tests, build, 11 end-to-end tests).
 
 ## 3. Interface
 
