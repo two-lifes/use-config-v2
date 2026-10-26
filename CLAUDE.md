@@ -6,8 +6,8 @@
 
 ## Текущее состояние
 
-Выполнен пункт 1.1: скаффолд проекта (Vite, React, TypeScript, manifest,
-обработчик иконки). Следующий пункт — 1.2 из
+Выполнены пункты 1.1 (скаффолд: Vite, React, TypeScript, manifest, обработчик
+иконки) и 1.2 (ESLint, Prettier). Следующий пункт — 1.3 из
 [docs/tasks.md](docs/tasks.md). Источник истины по прогрессу — отметки `[x]` в
 этом файле.
 
@@ -56,8 +56,11 @@ push предлагаются после выполнения и проверо�
 - `npm install` — установка зависимостей (версии закреплены в `package.json`).
 - `npm run typecheck` — `tsc --noEmit`.
 - `npm run build` — проверка типов и сборка расширения в `dist/`.
+- `npm run lint` — ESLint (typescript-eslint).
+- `npm run format` — форматирование Prettier (Markdown исключён).
+- `npm run format:check` — проверка форматирования Prettier.
 
-Lint, format, unit/e2e-тесты и `npm run check` добавляются в пунктах 1.2–1.3;
+Unit/e2e-тесты и `npm run check` добавляются в пункте 1.3;
 полный запланированный набор — в
 [docs/technical.md](docs/technical.md#commands).
 

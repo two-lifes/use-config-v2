@@ -195,6 +195,7 @@ Defined in task 1.1 and recorded in the root `CLAUDE.md`. Planned:
 | `npm run build` | Type check and build the extension into `dist/` |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
+| `npm run format` | Prettier write (Markdown is excluded) |
 | `npm run format:check` | Prettier check |
 | `npm run test:unit` | Unit tests |
 | `npm run test:e2e` | Build, then end-to-end tests |

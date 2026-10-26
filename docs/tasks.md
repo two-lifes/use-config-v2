@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: task 1.1 is done. The next task is 1.2.
+Status: tasks 1.1–1.2 are done. The next task is 1.3.
 
 ## Rules
 
@@ -27,7 +27,7 @@ Status: task 1.1 is done. The next task is 1.2.
   page showing the product name, and the toolbar icon handler from
   [technical.md](technical.md#toolbar-icon-behavior). Record the commands in
   `CLAUDE.md`.
-- [ ] 1.2. Linting and formatting (D-14): ESLint with typescript-eslint,
+- [x] 1.2. Linting and formatting (D-14): ESLint with typescript-eslint,
   Prettier, `lint`, `format`, `format:check` scripts. Confirm the TypeScript
   version is supported by typescript-eslint and adjust the pin if not.
 - [ ] 1.3. Playwright setup: `unit` and `e2e` projects, a fixture that loads
