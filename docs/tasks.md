@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: tasks 1.1–1.2 are done. The next task is 1.3.
+Status: stage 1 is done (C1 closed). The next task is 2.1.
 
 ## Rules
 
@@ -30,14 +30,17 @@ Status: tasks 1.1–1.2 are done. The next task is 1.3.
 - [x] 1.2. Linting and formatting (D-14): ESLint with typescript-eslint,
   Prettier, `lint`, `format`, `format:check` scripts. Confirm the TypeScript
   version is supported by typescript-eslint and adjust the pin if not.
-- [ ] 1.3. Playwright setup: `unit` and `e2e` projects, a fixture that loads
+- [x] 1.3. Playwright setup: `unit` and `e2e` projects, a fixture that loads
   `dist/` into headless Chromium and resolves the extension ID, a smoke test
   that opens the tab page, and a test of open-or-focus (US-01 except the
   welcome state). Add the `check` script.
 
-- [ ] **C1:** the built extension loads in headless Chromium, the tab opens and
+- [x] **C1:** the built extension loads in headless Chromium, the tab opens and
   is focused instead of duplicated, and type check, lint, format check and tests
   pass.
+  Closed 2026-10-26: Linux (WSL2), Node.js 24.22.1, Playwright 1.64.1 with its
+  bundled Chromium 156 (headless); `npm run check` passed (typecheck, lint,
+  format check, build, 3 end-to-end tests; no unit tests yet).
 
 ## 2. Data
 

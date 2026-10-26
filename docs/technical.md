@@ -188,16 +188,16 @@ version 1 exists and no migration code is written.
 
 ## Commands
 
-Defined in task 1.1 and recorded in the root `CLAUDE.md`. Planned:
+Recorded in the root `CLAUDE.md`.
 
 | Command | Purpose |
 |---|---|
 | `npm run build` | Type check and build the extension into `dist/` |
-| `npm run typecheck` | `tsc --noEmit` |
+| `npm run typecheck` | `tsc --noEmit` for `src` and for the tests (`tests/tsconfig.json`) |
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier write (Markdown is excluded) |
 | `npm run format:check` | Prettier check |
-| `npm run test:unit` | Unit tests |
+| `npm run test:unit` | Unit tests (passes while `tests/unit` is empty) |
 | `npm run test:e2e` | Build, then end-to-end tests |
 | `npm run check` | All of the above |
 

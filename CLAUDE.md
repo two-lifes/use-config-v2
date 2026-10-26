@@ -6,9 +6,9 @@
 
 ## Текущее состояние
 
-Выполнены пункты 1.1 (скаффолд: Vite, React, TypeScript, manifest, обработчик
-иконки) и 1.2 (ESLint, Prettier). Следующий пункт — 1.3 из
-[docs/tasks.md](docs/tasks.md). Источник истины по прогрессу — отметки `[x]` в
+Этап 1 завершён (C1 закрыт): 1.1 (скаффолд: Vite, React, TypeScript, manifest,
+обработчик иконки), 1.2 (ESLint, Prettier), 1.3 (Playwright: unit и e2e).
+Следующий пункт — 2.1 из [docs/tasks.md](docs/tasks.md). Источник истины по прогрессу — отметки `[x]` в
 этом файле.
 
 ## Документы
@@ -54,15 +54,19 @@ push предлагаются после выполнения и проверо�
 ## Команды проекта
 
 - `npm install` — установка зависимостей (версии закреплены в `package.json`).
-- `npm run typecheck` — `tsc --noEmit`.
+- `npm run typecheck` — `tsc --noEmit` для `src` и для тестов
+  (`tests/tsconfig.json`).
 - `npm run build` — проверка типов и сборка расширения в `dist/`.
 - `npm run lint` — ESLint (typescript-eslint).
 - `npm run format` — форматирование Prettier (Markdown исключён).
 - `npm run format:check` — проверка форматирования Prettier.
+- `npm run test:unit` — unit-тесты Playwright (`tests/unit`).
+- `npm run test:e2e` — сборка и e2e-тесты расширения в headless Chromium
+  (`tests/e2e`).
+- `npm run check` — все проверки: типы, линтер, форматирование, unit, сборка и
+  e2e.
 
-Unit/e2e-тесты и `npm run check` добавляются в пункте 1.3;
-полный запланированный набор — в
-[docs/technical.md](docs/technical.md#commands).
+Подробнее о тестах — в [docs/technical.md](docs/technical.md#testing).
 
 ## Проверки
 
