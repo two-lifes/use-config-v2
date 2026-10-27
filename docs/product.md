@@ -101,6 +101,8 @@ the first topic. The plaintext storage note is shown here once.
 - Results replace the entries pane, each showing its topic. An empty query
   returns to the selected topic. No matches shows an empty state with a Clear
   search action.
+- Selecting a result shows its details and keeps the selected topic;
+  selecting a topic clears the search.
 
 **Export and import (D-07):**
 

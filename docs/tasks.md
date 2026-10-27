@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–2 are done (C1, C2 closed); 3.1–3.3 are done. The next task is 3.4.
+Status: stages 1–2 are done (C1, C2 closed); 3.1–3.4 are done. The next task is 3.5.
 
 ## Rules
 
@@ -75,7 +75,7 @@ Status: stages 1–2 are done (C1, C2 closed); 3.1–3.3 are done. The next task
 - [x] 3.3. Entries pane and details: list with favicons and letter avatars,
   details view, add and edit form with validation, delete, move, unsaved
   changes guard (D-09) (US-03, US-04, US-05).
-- [ ] 3.4. Search: header field, `Ctrl+F`/`Cmd+F`, `Escape`, results with topic
+- [x] 3.4. Search: header field, `Ctrl+F`/`Cmd+F`, `Escape`, results with topic
   names, empty state with Clear search (US-08).
 - [ ] 3.5. Actions: open URL and additional URL, Open all with confirmation over
   10, copy username and password with toast, reveal toggle (US-06, US-07).

@@ -127,6 +127,56 @@ textarea {
   font-weight: 600;
 }
 
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.search__icon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search__input {
+  width: 100%;
+  height: 34px;
+  padding: 0 64px 0 36px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--motion);
+}
+
+.search__input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.search__input:disabled {
+  opacity: 0.5;
+}
+
+/* The field's own clear button would duplicate Escape and Clear search */
+.search__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.search__shortcut {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  pointer-events: none;
+}
+
 .workspace {
   display: grid;
   grid-template-columns: 240px minmax(320px, 400px) minmax(0, 1fr);

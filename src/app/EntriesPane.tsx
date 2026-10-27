@@ -1,4 +1,5 @@
-import { KeyRound, Plus } from "lucide-react";
+import { KeyRound, Plus, SearchX } from "lucide-react";
+import type { SearchResult } from "../lib/catalog";
 import type { Entry, Topic } from "../lib/model";
 import { Button, IconButton } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
@@ -43,39 +44,89 @@ export function EntriesPane({
           }
         />
       ) : (
-        <ul className="entry-list" onKeyDown={moveFocus(".entry-list__select")}>
-          {entries.map((entry) => {
-            const selected = entry.id === selectedId;
-            return (
-              <li
-                key={entry.id}
-                className={
-                  selected
-                    ? "entry-list__item entry-list__item--selected"
-                    : "entry-list__item"
-                }
-              >
-                <button
-                  type="button"
-                  className="entry-list__select"
-                  aria-current={selected ? "true" : undefined}
-                  onClick={() => onSelect(entry.id)}
-                >
-                  <EntryIcon
-                    key={entry.url}
-                    name={entry.name}
-                    url={entry.url}
-                  />
-                  <span className="entry-list__text">
-                    <span className="entry-list__name">{entry.name}</span>
-                    <span className="entry-list__host">{host(entry.url)}</span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        <EntryList
+          rows={entries.map((entry) => ({ entry, detail: host(entry.url) }))}
+          selectedId={selectedId}
+          onSelect={onSelect}
+        />
       )}
     </Pane>
+  );
+}
+
+interface SearchResultsPaneProps {
+  // Sorted by entry name, then topic name
+  results: SearchResult[];
+  selectedId: string | undefined;
+  onSelect: (entryId: string) => void;
+  onClear: () => void;
+}
+
+export function SearchResultsPane({
+  results,
+  selectedId,
+  onSelect,
+  onClear,
+}: SearchResultsPaneProps) {
+  return (
+    <Pane title="Search results">
+      {results.length === 0 ? (
+        <EmptyState
+          icon={SearchX}
+          text="No entries match your search."
+          action={<Button onClick={onClear}>Clear search</Button>}
+        />
+      ) : (
+        <EntryList
+          rows={results.map(({ entry, topic }) => ({
+            entry,
+            detail: `${topic.name} · ${host(entry.url)}`,
+          }))}
+          selectedId={selectedId}
+          onSelect={onSelect}
+        />
+      )}
+    </Pane>
+  );
+}
+
+function EntryList({
+  rows,
+  selectedId,
+  onSelect,
+}: {
+  rows: { entry: Entry; detail: string }[];
+  selectedId: string | undefined;
+  onSelect: (entryId: string) => void;
+}) {
+  return (
+    <ul className="entry-list" onKeyDown={moveFocus(".entry-list__select")}>
+      {rows.map(({ entry, detail }) => {
+        const selected = entry.id === selectedId;
+        return (
+          <li
+            key={entry.id}
+            className={
+              selected
+                ? "entry-list__item entry-list__item--selected"
+                : "entry-list__item"
+            }
+          >
+            <button
+              type="button"
+              className="entry-list__select"
+              aria-current={selected ? "true" : undefined}
+              onClick={() => onSelect(entry.id)}
+            >
+              <EntryIcon key={entry.url} name={entry.name} url={entry.url} />
+              <span className="entry-list__text">
+                <span className="entry-list__name">{entry.name}</span>
+                <span className="entry-list__host">{detail}</span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

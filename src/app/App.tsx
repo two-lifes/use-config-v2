@@ -1,12 +1,17 @@
 import { FileText, FolderPlus, Lock, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { countEntries, entriesOfTopic, sortTopics } from "../lib/catalog";
+import {
+  countEntries,
+  entriesOfTopic,
+  searchEntries,
+  sortTopics,
+} from "../lib/catalog";
 import type { Entry, StoredCatalog, Topic } from "../lib/model";
 import type { CatalogRepository, LoadResult } from "../storage/repository";
 import { Button } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
 import { ToastProvider } from "./components/Toast";
-import { EntriesPane } from "./EntriesPane";
+import { EntriesPane, SearchResultsPane } from "./EntriesPane";
 import {
   DeleteEntryDialog,
   DiscardChangesDialog,
@@ -45,7 +50,6 @@ export function App({ repository }: AppProps) {
   return (
     <ToastProvider>
       <div className="app">
-        <Header />
         <Workspace state={state} repository={repository} />
       </div>
     </ToastProvider>
@@ -60,17 +64,26 @@ function Workspace({
   repository: CatalogRepository;
 }) {
   // Nothing is shown while loading so the welcome state does not flash
-  if (!state) return <main className="workspace workspace--single" />;
+  if (!state)
+    return (
+      <>
+        <Header />
+        <main className="workspace workspace--single" />
+      </>
+    );
 
   if (state.status !== "ok") {
     // The full error state with the raw data export is task 3.6 (US-11)
     return (
-      <main className="workspace workspace--single">
-        <EmptyState
-          icon={TriangleAlert}
-          text="Stored data could not be loaded."
-        />
-      </main>
+      <>
+        <Header />
+        <main className="workspace workspace--single">
+          <EmptyState
+            icon={TriangleAlert}
+            text="Stored data could not be loaded."
+          />
+        </main>
+      </>
     );
   }
 
@@ -97,6 +110,7 @@ function Catalog({
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedEntryId, setSelectedEntryId] = useState<string>();
   const [mode, setMode] = useState<DetailsMode>("view");
+  const [query, setQuery] = useState("");
   // A new key per opened form resets its input
   const [formKey, setFormKey] = useState(0);
   const [dirty, setDirty] = useState(false);
@@ -122,8 +136,17 @@ function Catalog({
     () => (selected ? entriesOfTopic(catalog, selected.id) : []),
     [catalog, selected],
   );
-  // An entry deleted or moved away here or in another tab is deselected
-  const selectedEntry = entries.find((entry) => entry.id === selectedEntryId);
+  const results = useMemo(
+    () => searchEntries(catalog, query),
+    [catalog, query],
+  );
+  // Results replace the entries of the selected topic while the query is set
+  const searching = query.trim() !== "";
+  // An entry deleted or moved away here or in another tab is deselected; so is
+  // a result from another topic when the search is cleared
+  const selectedEntry = (
+    searching ? results.map((result) => result.entry) : entries
+  ).find((entry) => entry.id === selectedEntryId);
   const shownMode = mode === "edit" && !selectedEntry ? "view" : mode;
 
   // The browser asks before closing or reloading the tab (US-04)
@@ -153,12 +176,25 @@ function Catalog({
     setSelectedEntryId(entryId);
     setMode("view");
   };
+  // Selecting a topic, even the selected one, ends the search
   const selectTopic = (topicId: string) => {
-    if (topicId === selected?.id) return;
+    if (topicId === selected?.id && !searching) return;
     leaveForm(() => {
+      setQuery("");
+      setMode("view");
+      if (topicId === selected?.id) return;
       setSelectedId(topicId);
-      showEntry(undefined);
+      setSelectedEntryId(undefined);
     });
+  };
+  // Starting or changing a search leaves the entry form (D-09)
+  const changeQuery = (next: string) => {
+    if (shownMode === "view") setQuery(next);
+    else
+      leaveForm(() => {
+        setQuery(next);
+        setMode("view");
+      });
   };
   const selectEntry = (entryId: string) => {
     if (entryId === selectedEntry?.id && shownMode === "view") return;
@@ -173,6 +209,11 @@ function Catalog({
 
   return (
     <>
+      {topics.length === 0 ? (
+        <Header />
+      ) : (
+        <Header query={query} onQueryChange={changeQuery} />
+      )}
       {topics.length === 0 ? (
         <main className="workspace workspace--single">
           <Welcome onCreateTopic={() => open({ kind: "create" })} />
@@ -189,14 +230,23 @@ function Catalog({
             onRename={(topic) => open({ kind: "rename", topic })}
             onDelete={(topic) => open({ kind: "delete", topic })}
           />
-          {selected && (
-            <EntriesPane
-              topic={selected}
-              entries={entries}
-              selectedId={shownMode === "add" ? undefined : selectedEntry?.id}
+          {searching ? (
+            <SearchResultsPane
+              results={results}
+              selectedId={selectedEntry?.id}
               onSelect={selectEntry}
-              onAdd={addEntry}
+              onClear={() => changeQuery("")}
             />
+          ) : (
+            selected && (
+              <EntriesPane
+                topic={selected}
+                entries={entries}
+                selectedId={shownMode === "add" ? undefined : selectedEntry?.id}
+                onSelect={selectEntry}
+                onAdd={addEntry}
+              />
+            )
           )}
           <Pane title="Details">
             {selected && shownMode !== "view" ? (
@@ -244,6 +294,10 @@ function Catalog({
             showEntry(undefined);
           }}
           onEntryRemoved={() => showEntry(undefined)}
+          // A moved entry stays among the search results
+          onEntryMoved={() => {
+            if (!searching) showEntry(undefined);
+          }}
           onDiscard={(proceed) => {
             setDirty(false);
             setMode("view");
@@ -263,6 +317,7 @@ function CatalogDialogs({
   entryCounts,
   onTopicCreated,
   onEntryRemoved,
+  onEntryMoved,
   onDiscard,
   close,
 }: {
@@ -272,6 +327,7 @@ function CatalogDialogs({
   entryCounts: ReadonlyMap<string, number>;
   onTopicCreated: (topicId: string) => void;
   onEntryRemoved: () => void;
+  onEntryMoved: () => void;
   onDiscard: (proceed: () => void) => void;
   close: () => void;
 }) {
@@ -327,7 +383,7 @@ function CatalogDialogs({
           entry={value.entry}
           targets={topics.filter((topic) => topic.id !== value.entry.topicId)}
           onDone={() => {
-            onEntryRemoved();
+            onEntryMoved();
             close();
           }}
           onCancel={close}
