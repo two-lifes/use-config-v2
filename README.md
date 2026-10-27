@@ -36,6 +36,19 @@ The extension ID is pinned by the `key` in `public/manifest.json` and is always
 `eicjdlcomdndfepnpfpgpjloecpnkkpj`, whatever folder you load it from. Your data
 belongs to this ID, so do not change or remove `key`.
 
+## Permissions
+
+- **storage** keeps the catalog and the settings in this Chrome profile.
+- **favicon** shows website icons from Chrome's own cache.
+- **tabs** reads the addresses of open tabs to mark entries whose website is
+  already open. Because of it, Chrome shows the warning **"Read your browsing
+  history"** when you load or update the extension. Clay only compares the
+  tabs' origins (scheme, host and port) with your entries while its tab is
+  open; tab addresses are never stored or sent anywhere.
+
+Clay has no host permissions and no content scripts: it cannot read or change
+the pages you visit.
+
 ## Update
 
 1. Get the new source and run `npm install` and `npm run build`.

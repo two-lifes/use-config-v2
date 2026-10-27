@@ -37,6 +37,7 @@ import {
 } from "./EntryDialogs";
 import { EntryForm, EntryView } from "./EntryDetails";
 import { Header, type MenuActions } from "./Header";
+import { useOpenOrigins } from "./openTabs";
 import { Pane } from "./Pane";
 import { SettingsDialog } from "./SettingsDialog";
 import { DeleteTopicDialog, TopicNameDialog } from "./TopicDialogs";
@@ -284,6 +285,7 @@ function Catalog({
   settings: StoredSettings;
   menu: MenuActions;
 }) {
+  const openOrigins = useOpenOrigins();
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedEntryId, setSelectedEntryId] = useState<string>();
   const [mode, setMode] = useState<DetailsMode>("view");
@@ -437,6 +439,7 @@ function Catalog({
           {searching ? (
             <SearchResultsPane
               results={results}
+              openOrigins={openOrigins}
               selectedId={selectedEntry?.id}
               onSelect={selectEntry}
               onOpen={openOne}
@@ -447,6 +450,7 @@ function Catalog({
               <EntriesPane
                 topic={selected}
                 entries={entries}
+                openOrigins={openOrigins}
                 selectedId={shownMode === "add" ? undefined : selectedEntry?.id}
                 onSelect={selectEntry}
                 onOpen={openOne}

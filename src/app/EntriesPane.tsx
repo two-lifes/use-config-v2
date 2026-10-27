@@ -1,6 +1,7 @@
 import { ExternalLink, KeyRound, Plus, SearchX, User } from "lucide-react";
 import type { SearchResult } from "../lib/catalog";
 import type { Entry, Topic } from "../lib/model";
+import { isOpen } from "../lib/tabs";
 import { useCopy } from "./actions";
 import { Button, IconButton } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
@@ -12,6 +13,8 @@ interface EntriesPaneProps {
   topic: Topic;
   // Entries of the topic, sorted by name
   entries: Entry[];
+  // Origins of the open browser tabs (US-15)
+  openOrigins: ReadonlySet<string>;
   selectedId: string | undefined;
   onSelect: (entryId: string) => void;
   onOpen: (url: string) => void;
@@ -27,6 +30,7 @@ function host(url: string): string {
 export function EntriesPane({
   topic,
   entries,
+  openOrigins,
   selectedId,
   onSelect,
   onOpen,
@@ -62,6 +66,7 @@ export function EntriesPane({
       ) : (
         <EntryList
           rows={entries.map((entry) => ({ entry, detail: host(entry.url) }))}
+          openOrigins={openOrigins}
           selectedId={selectedId}
           onSelect={onSelect}
           onOpen={onOpen}
@@ -74,6 +79,7 @@ export function EntriesPane({
 interface SearchResultsPaneProps {
   // Sorted by entry name, then topic name
   results: SearchResult[];
+  openOrigins: ReadonlySet<string>;
   selectedId: string | undefined;
   onSelect: (entryId: string) => void;
   onOpen: (url: string) => void;
@@ -82,6 +88,7 @@ interface SearchResultsPaneProps {
 
 export function SearchResultsPane({
   results,
+  openOrigins,
   selectedId,
   onSelect,
   onOpen,
@@ -101,6 +108,7 @@ export function SearchResultsPane({
             entry,
             detail: `${topic.name} · ${host(entry.url)}`,
           }))}
+          openOrigins={openOrigins}
           selectedId={selectedId}
           onSelect={onSelect}
           onOpen={onOpen}
@@ -112,11 +120,13 @@ export function SearchResultsPane({
 
 function EntryList({
   rows,
+  openOrigins,
   selectedId,
   onSelect,
   onOpen,
 }: {
   rows: { entry: Entry; detail: string }[];
+  openOrigins: ReadonlySet<string>;
   selectedId: string | undefined;
   onSelect: (entryId: string) => void;
   onOpen: (url: string) => void;
@@ -141,7 +151,17 @@ function EntryList({
               aria-current={selected ? "true" : undefined}
               onClick={() => onSelect(entry.id)}
             >
-              <EntryIcon key={entry.url} name={entry.name} url={entry.url} />
+              <span className="entry-icon-wrap">
+                <EntryIcon key={entry.url} name={entry.name} url={entry.url} />
+                {isOpen(entry.url, openOrigins) && (
+                  <span
+                    className="entry-open-mark"
+                    role="img"
+                    aria-label="Open in a tab"
+                    title="Open in a tab"
+                  />
+                )}
+              </span>
               <span className="entry-list__text">
                 <span className="entry-list__name">{entry.name}</span>
                 <span className="entry-list__host">{detail}</span>

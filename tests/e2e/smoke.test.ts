@@ -45,3 +45,16 @@ test("the manifest requires Chrome 121", async () => {
 
   expect(manifest.minimum_chrome_version).toBe("121");
 });
+
+// "tabs" reads tab URLs for the open-tab indicator (D-19)
+test("the manifest asks for storage, favicon and tabs only", async () => {
+  const manifest = JSON.parse(
+    await readFile(
+      path.resolve(import.meta.dirname, "../../dist/manifest.json"),
+      "utf8",
+    ),
+  ) as { permissions: string[]; host_permissions?: string[] };
+
+  expect(manifest.permissions).toEqual(["storage", "favicon", "tabs"]);
+  expect(manifest.host_permissions).toBeUndefined();
+});

@@ -21,6 +21,6 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage", "favicon"],
+  "permissions": ["storage", "favicon", "tabs"],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy/IECyaibip/xg9qlGvO29gIVxJT4T+fkLZvfMJVixeB67m1FXyckds/dYNoNZXwFhgFhaqpX3G3V2VYRfgOJUSG+c8gHmbxtU7glCugQg2JvGBnzxPWuFamMFMOwofo7KBD2CKziL/3JWXmn+2x5sWzho8MLh/gXQWwzb756XbbkK7156rsOgpuoWc2Y9rTtXG3pmbRjCEWwzH73bVy/gsCXTdqRwFxyhposhJL81ZJCmfCtEKACLEDRRSp92yhI722ll0myOYApMzIen0ZCy5IeL5ZPOo3pzUnA/2fPES2ySGBpOF/k062B5cqVkZ3fXLHGTr+8YlPw6+H0wzanQIDAQAB"
 }

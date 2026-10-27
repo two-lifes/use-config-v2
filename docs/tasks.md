@@ -5,7 +5,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [design.md](design.md).
 
 Status: the MVP (stages 1–4, C1–C4) is done. Stage 5 (improvements) is in
-progress: 5.1–5.3 are done; the next task is 5.4.
+progress: 5.1–5.4 are done; the next task is 5.5.
 
 ## Rules
 
@@ -127,7 +127,7 @@ Requested by the user on 2026-10-27 after the MVP; decisions D-19–D-24.
 - [x] 5.3. Settings: settings model and validation in `src/lib`, storage in
   `src/storage`, Settings dialog in the header menu, Open all confirmation
   threshold (D-20, D-21, US-14, US-06).
-- [ ] 5.4. Open tab indicator: `tabs` permission, origin matching in
+- [x] 5.4. Open tab indicator: `tabs` permission, origin matching in
   `src/lib`, tab tracking in the extension tab, the mark in the entries pane
   and search results (D-19, D-22, US-15). `README.md` explains the
   "Read your browsing history" warning.
