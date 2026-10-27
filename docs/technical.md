@@ -260,8 +260,9 @@ interface StoredSettings {
   taken from the service worker URL. Tests open
   `chrome-extension://<id>/index.html` and cover every story in
   [user-stories.md](user-stories.md).
-- The tab page exposes the storage repository and the catalog operations as
-  `globalThis.useConfigTest`; storage tests call them through `page.evaluate`.
+- The tab page exposes the storage repository, the catalog operations and the
+  settings repository as `globalThis.useConfigTest`; storage tests call them
+  through `page.evaluate`.
 - The toolbar click cannot be simulated directly; the service worker exposes its
   open-or-focus function, and the test calls it through `serviceWorker.evaluate`.
 - Clipboard tests grant `clipboard-read` and `clipboard-write` to the test

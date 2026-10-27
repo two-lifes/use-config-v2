@@ -15,9 +15,15 @@ import {
   sortTopics,
 } from "../lib/catalog";
 import type { Entry, StoredCatalog, Topic } from "../lib/model";
+import {
+  DEFAULT_SETTINGS,
+  needsOpenAllConfirmation,
+  type StoredSettings,
+} from "../lib/settings";
 import type { CatalogRepository, LoadResult } from "../storage/repository";
-import { OPEN_ALL_CONFIRM_LIMIT, openUrl, openUrls } from "./actions";
-import { useBackup, type BackupActions } from "./BackupDialogs";
+import type { SettingsRepository } from "../storage/settings";
+import { openUrl, openUrls } from "./actions";
+import { useBackup } from "./BackupDialogs";
 import { Button } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
 import { ToastProvider, useToast } from "./components/Toast";
@@ -30,17 +36,20 @@ import {
   OpenAllDialog,
 } from "./EntryDialogs";
 import { EntryForm, EntryView } from "./EntryDetails";
-import { Header } from "./Header";
+import { Header, type MenuActions } from "./Header";
 import { Pane } from "./Pane";
+import { SettingsDialog } from "./SettingsDialog";
 import { DeleteTopicDialog, TopicNameDialog } from "./TopicDialogs";
 import { TopicsPane } from "./TopicsPane";
 
 interface AppProps {
   repository: CatalogRepository;
+  settingsRepository: SettingsRepository;
 }
 
-export function App({ repository }: AppProps) {
+export function App({ repository, settingsRepository }: AppProps) {
   const [state, setState] = useState<LoadResult | null>(null);
+  const [settings, setSettings] = useState<StoredSettings | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -59,10 +68,34 @@ export function App({ repository }: AppProps) {
     };
   }, [repository]);
 
+  // Saved in another tab, the settings apply here at once (US-14)
+  useEffect(() => {
+    let active = true;
+    let changed = false;
+    const unsubscribe = settingsRepository.subscribe((result) => {
+      changed = true;
+      setSettings(result);
+    });
+    settingsRepository.load().then((result) => {
+      if (active && !changed) setSettings(result);
+    });
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [settingsRepository]);
+
   return (
     <ToastProvider>
       <div className="app">
-        <Workspace state={state} repository={repository} />
+        <Workspace
+          // Open all must not use the defaults before the stored settings
+          // arrive, so the tab stays in the loading state until then
+          state={settings ? state : null}
+          repository={repository}
+          settings={settings ?? DEFAULT_SETTINGS}
+          settingsRepository={settingsRepository}
+        />
       </div>
     </ToastProvider>
   );
@@ -71,21 +104,51 @@ export function App({ repository }: AppProps) {
 function Workspace({
   state,
   repository,
+  settings,
+  settingsRepository,
 }: {
   state: LoadResult | null;
   repository: CatalogRepository;
+  settings: StoredSettings;
+  settingsRepository: SettingsRepository;
 }) {
   // The dialogs stay mounted when an import moves the tab out of the error state
   const backup = useBackup(repository, state);
+  // Stays mounted while closing so the browser can return focus; a new key per
+  // opening resets the form to the current settings
+  const [settingsDialog, setSettingsDialog] = useState<{
+    open: boolean;
+    key: number;
+  }>();
+  const closeSettings = () =>
+    setSettingsDialog((current) => current && { ...current, open: false });
 
   return (
     <>
       <WorkspaceContent
         state={state}
         repository={repository}
-        menu={backup.actions}
+        settings={settings}
+        menu={{
+          ...backup.actions,
+          showSettings: () =>
+            setSettingsDialog((current) => ({
+              open: true,
+              key: (current?.key ?? 0) + 1,
+            })),
+        }}
       />
       {backup.element}
+      {settingsDialog && (
+        <SettingsDialog
+          key={settingsDialog.key}
+          open={settingsDialog.open}
+          repository={settingsRepository}
+          settings={settings}
+          onDone={closeSettings}
+          onCancel={closeSettings}
+        />
+      )}
     </>
   );
 }
@@ -93,11 +156,13 @@ function Workspace({
 function WorkspaceContent({
   state,
   repository,
+  settings,
   menu,
 }: {
   state: LoadResult | null;
   repository: CatalogRepository;
-  menu: BackupActions;
+  settings: StoredSettings;
+  menu: MenuActions;
 }) {
   // Nothing is shown while loading so the welcome state does not flash
   if (!state)
@@ -120,7 +185,12 @@ function WorkspaceContent({
   }
 
   return (
-    <Catalog catalog={state.catalog} repository={repository} menu={menu} />
+    <Catalog
+      catalog={state.catalog}
+      repository={repository}
+      settings={settings}
+      menu={menu}
+    />
   );
 }
 
@@ -206,11 +276,13 @@ type DetailsMode = "view" | "add" | "edit";
 function Catalog({
   catalog,
   repository,
+  settings,
   menu,
 }: {
   catalog: StoredCatalog;
   repository: CatalogRepository;
-  menu: BackupActions;
+  settings: StoredSettings;
+  menu: MenuActions;
 }) {
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedEntryId, setSelectedEntryId] = useState<string>();
@@ -328,13 +400,13 @@ function Catalog({
   };
   const openAll = (topic: Topic) => {
     const urls = entries.map((entry) => entry.url);
-    if (urls.length > OPEN_ALL_CONFIRM_LIMIT)
+    if (needsOpenAllConfirmation(urls.length, settings))
       open({ kind: "open-all", topic, urls });
     else openMany(urls);
   };
 
   // An import replaces the entry being edited, so it asks first (D-09)
-  const catalogMenu: BackupActions = {
+  const catalogMenu: MenuActions = {
     ...menu,
     startImport: () => leaveForm(menu.startImport),
   };

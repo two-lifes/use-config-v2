@@ -5,7 +5,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [design.md](design.md).
 
 Status: the MVP (stages 1–4, C1–C4) is done. Stage 5 (improvements) is in
-progress: 5.1–5.2 are done; the next task is 5.3.
+progress: 5.1–5.3 are done; the next task is 5.4.
 
 ## Rules
 
@@ -124,7 +124,7 @@ Requested by the user on 2026-10-27 after the MVP; decisions D-19–D-24.
   Update screenshots and e2e checks of the layout where they exist.
 - [x] 5.2. Entry row quick actions: Open URL, Copy username, Copy password on
   hover and keyboard focus (D-23, US-13).
-- [ ] 5.3. Settings: settings model and validation in `src/lib`, storage in
+- [x] 5.3. Settings: settings model and validation in `src/lib`, storage in
   `src/storage`, Settings dialog in the header menu, Open all confirmation
   threshold (D-20, D-21, US-14, US-06).
 - [ ] 5.4. Open tab indicator: `tabs` permission, origin matching in

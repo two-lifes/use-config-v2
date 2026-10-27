@@ -6,6 +6,7 @@ import type {
 } from "../lib/catalog";
 import { SCHEMA_VERSION, type StoredCatalog } from "../lib/model";
 import { validateCatalog } from "../lib/validation";
+import type { SettingsRepository } from "./settings";
 
 const STORAGE_KEY = "catalog";
 
@@ -56,6 +57,7 @@ export interface CatalogRepository {
 export interface TestHook {
   repository: CatalogRepository;
   operations: typeof catalogOperations;
+  settings: SettingsRepository;
 }
 
 function emptyCatalog(): StoredCatalog {

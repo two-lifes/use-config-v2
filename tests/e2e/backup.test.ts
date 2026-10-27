@@ -145,13 +145,14 @@ test("the menu opens with the keyboard, moves with arrows and closes with Escape
   await expect(menu).toBeVisible();
   await expect(menuButton(page)).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByRole("menuitem")).toHaveText([
+    "Settings",
     "Export",
     "Import",
     "About",
   ]);
-  await expect(page.getByRole("menuitem", { name: "Export" })).toBeFocused();
+  await expect(page.getByRole("menuitem", { name: "Settings" })).toBeFocused();
   await page.keyboard.press("ArrowDown");
-  await expect(page.getByRole("menuitem", { name: "Import" })).toBeFocused();
+  await expect(page.getByRole("menuitem", { name: "Export" })).toBeFocused();
   await page.keyboard.press("ArrowUp");
   await page.keyboard.press("ArrowUp");
   await expect(page.getByRole("menuitem", { name: "About" })).toBeFocused();

@@ -1,4 +1,11 @@
-import { Download, Info, Ellipsis, Search, Upload } from "lucide-react";
+import {
+  Download,
+  Info,
+  Ellipsis,
+  Search,
+  Settings,
+  Upload,
+} from "lucide-react";
 import { useEffect, useRef } from "react";
 import type { BackupActions } from "./BackupDialogs";
 import { Menu } from "./components/Menu";
@@ -9,8 +16,10 @@ interface HeaderProps {
   query?: string;
   onQueryChange?: (query: string) => void;
   // Without actions (while loading) the menu button is shown disabled
-  menu?: BackupActions;
+  menu?: MenuActions;
 }
+
+export type MenuActions = BackupActions & { showSettings: () => void };
 
 const shortcut = navigator.userAgent.includes("Mac") ? "⌘F" : "Ctrl+F";
 
@@ -28,6 +37,11 @@ export function Header({ query = "", onQueryChange, menu }: HeaderProps) {
           icon={Ellipsis}
           items={
             menu && [
+              {
+                label: "Settings",
+                icon: Settings,
+                onSelect: menu.showSettings,
+              },
               {
                 label: "Export",
                 icon: Download,
