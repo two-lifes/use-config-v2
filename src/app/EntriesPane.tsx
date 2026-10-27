@@ -1,6 +1,7 @@
-import { ExternalLink, KeyRound, Plus, SearchX } from "lucide-react";
+import { ExternalLink, KeyRound, Plus, SearchX, User } from "lucide-react";
 import type { SearchResult } from "../lib/catalog";
 import type { Entry, Topic } from "../lib/model";
+import { useCopy } from "./actions";
 import { Button, IconButton } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
 import { EntryIcon } from "./EntryIcon";
@@ -120,6 +121,7 @@ function EntryList({
   onSelect: (entryId: string) => void;
   onOpen: (url: string) => void;
 }) {
+  const copy = useCopy();
   return (
     <ul className="entry-list" onKeyDown={moveFocus(".entry-list__select")}>
       {rows.map(({ entry, detail }) => {
@@ -145,16 +147,27 @@ function EntryList({
                 <span className="entry-list__host">{detail}</span>
               </span>
             </button>
-            {/* Like the topic actions, only the selected row has one */}
-            {selected && (
-              <span className="entry-list__actions">
-                <IconButton
-                  label="Open URL"
-                  icon={ExternalLink}
-                  onClick={() => onOpen(entry.url)}
-                />
-              </span>
-            )}
+            {/* Siblings of the select button, so they leave the selection
+                and the form alone (US-13) */}
+            <span className="entry-list__actions">
+              <IconButton
+                label="Open URL"
+                icon={ExternalLink}
+                onClick={() => onOpen(entry.url)}
+              />
+              <IconButton
+                label="Copy username"
+                icon={User}
+                disabled={!entry.username}
+                onClick={() => copy(entry.username, "Username")}
+              />
+              <IconButton
+                label="Copy password"
+                icon={KeyRound}
+                disabled={!entry.password}
+                onClick={() => copy(entry.password, "Password")}
+              />
+            </span>
           </li>
         );
       })}

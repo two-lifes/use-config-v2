@@ -153,22 +153,150 @@ test("Open URL and Open additional URL each open one tab in front", async ({
   expect(siteUrls(context)).toEqual([site("docs/proxmox"), site("proxmox")]);
 });
 
-test("the selected list item opens its URL", async ({
+function entryRow(page: Page, name: string) {
+  return page.locator(".entry-list__item", { hasText: name });
+}
+
+// The row hides and shows its quick actions together
+function quickActions(page: Page, name: string) {
+  return entryRow(page, name).locator(".entry-list__actions");
+}
+
+test("quick actions show on hover; Open URL keeps the selection", async ({
   context,
   extensionId,
 }) => {
   const page = await openTab(context, extensionId);
   await seed(page, { "My VPS": [input("Grafana"), input("Proxmox")] });
-  const list = page.locator(".entry-list");
-  await expect(list.getByRole("button", { name: "Open URL" })).toHaveCount(0);
+  await selectEntry(page, "Proxmox");
+  const row = entryRow(page, "Grafana");
+  const actions = quickActions(page, "Grafana");
+  await page.mouse.move(0, 0);
+  await expect(actions).toHaveCSS("opacity", "0");
 
-  await selectEntry(page, "Grafana");
+  await row.hover();
+  await expect(actions).toHaveCSS("opacity", "1");
+  for (const name of ["Open URL", "Copy username", "Copy password"]) {
+    await expect(row.getByRole("button", { name })).toBeVisible();
+  }
+  // Showing the actions keeps the row height
+  expect((await row.boundingBox())?.height).toBe(48);
+
   const [tab] = await Promise.all([
     context.waitForEvent("page"),
-    list.getByRole("button", { name: "Open URL" }).click(),
+    row.getByRole("button", { name: "Open URL" }).click(),
   ]);
   await expect(tab).toHaveURL(site("grafana"));
   expect(siteUrls(context)).toEqual([site("grafana")]);
+  await expect(
+    details(page).getByRole("heading", { name: "Proxmox" }),
+  ).toBeVisible();
+
+  await page.mouse.move(0, 0);
+  await expect(actions).toHaveCSS("opacity", "0");
+});
+
+test("quick copy puts the exact text in the clipboard with a toast", async ({
+  context,
+  extensionId,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const page = await openTab(context, extensionId);
+  await seed(page, {
+    "My VPS": [
+      input("Proxmox", { username: " root@pam ", password: "p@ss word\t1" }),
+    ],
+  });
+  const row = entryRow(page, "Proxmox");
+
+  await row.hover();
+  await row.getByRole("button", { name: "Copy username" }).click();
+  await expect(toast(page)).toHaveText("Username copied");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    " root@pam ",
+  );
+
+  await row.getByRole("button", { name: "Copy password" }).click();
+  await expect(toast(page)).toHaveText("Password copied");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "p@ss word\t1",
+  );
+  // Copying does not select the entry
+  await expect(row).not.toHaveClass(/entry-list__item--selected/);
+});
+
+test("quick copy buttons are disabled for empty fields", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  await seed(page, {
+    "My VPS": [input("Grafana"), input("Proxmox", { username: "root" })],
+  });
+
+  const empty = entryRow(page, "Grafana");
+  for (const name of ["Copy username", "Copy password"]) {
+    await expect(empty.getByRole("button", { name })).toBeDisabled();
+  }
+  await expect(empty.getByRole("button", { name: "Open URL" })).toBeEnabled();
+  const filled = entryRow(page, "Proxmox");
+  await expect(
+    filled.getByRole("button", { name: "Copy username" }),
+  ).toBeEnabled();
+  await expect(
+    filled.getByRole("button", { name: "Copy password" }),
+  ).toBeDisabled();
+});
+
+test("keyboard focus in the row shows the quick actions in Tab order", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  await seed(page, {
+    "My VPS": [input("Grafana", { username: "admin", password: "secret" })],
+  });
+  const row = entryRow(page, "Grafana");
+  const actions = quickActions(page, "Grafana");
+  await page.mouse.move(0, 0);
+  await expect(actions).toHaveCSS("opacity", "0");
+
+  await row.locator(".entry-list__select").focus();
+  for (const name of ["Open URL", "Copy username", "Copy password"]) {
+    await page.keyboard.press("Tab");
+    await expect(row.getByRole("button", { name })).toBeFocused();
+    await expect(actions).toHaveCSS("opacity", "1");
+  }
+  // Focus leaving the row hides them again
+  await page.keyboard.press("Tab");
+  await expect(actions).toHaveCSS("opacity", "0");
+});
+
+test("a quick action does not ask about unsaved changes", async ({
+  context,
+  extensionId,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const page = await openTab(context, extensionId);
+  await seed(page, {
+    "My VPS": [input("Grafana"), input("Proxmox", { username: "root" })],
+  });
+  await selectEntry(page, "Grafana");
+  await details(page).getByRole("button", { name: "Edit" }).click();
+  const name = details(page).getByLabel("Name", { exact: true });
+  await name.fill("Grafana edited");
+
+  const row = entryRow(page, "Proxmox");
+  await row.hover();
+  await row.getByRole("button", { name: "Copy username" }).click();
+  await expect(toast(page)).toHaveText("Username copied");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "root",
+  );
+  await expect(
+    page.getByRole("dialog", { name: "Discard unsaved changes?" }),
+  ).toBeHidden();
+  await expect(name).toHaveValue("Grafana edited");
 });
 
 test("Open all is disabled for an empty topic", async ({

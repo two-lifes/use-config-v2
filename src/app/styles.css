@@ -424,9 +424,30 @@ textarea.field__control {
   cursor: pointer;
 }
 
+/* Hidden actions keep their place in the Tab order, so they are collapsed
+   instead of removed; a shown row truncates its text rather than shifting it
+   (D-23) */
 .entry-list__actions {
   display: flex;
+  flex: none;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity var(--motion);
+}
+
+.entry-list__item:hover .entry-list__actions,
+.entry-list__item:has(:focus-visible) .entry-list__actions {
+  width: auto;
+  /* Lets the focus outline show outside the buttons */
+  overflow: visible;
   padding-right: var(--space-2);
+  opacity: 1;
+}
+
+.entry-list__actions .button--icon {
+  width: 28px;
+  height: 28px;
 }
 
 .entry-list__text {

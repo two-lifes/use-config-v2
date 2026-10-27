@@ -1,4 +1,5 @@
 import { isHttpUrl } from "../lib/validation";
+import { useToast } from "./components/Toast";
 
 // Open all asks first above this number of tabs (US-06)
 export const OPEN_ALL_CONFIRM_LIMIT = 10;
@@ -17,4 +18,21 @@ export async function openUrls(urls: string[]): Promise<void> {
 
 export async function copyText(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
+}
+
+// The details pane and the row quick actions report a copy the same way
+export function useCopy(): (
+  text: string,
+  what: "Username" | "Password",
+) => void {
+  const showToast = useToast();
+  return (text, what) => {
+    copyText(text).then(
+      () => showToast(`${what} copied`),
+      (error: unknown) => {
+        console.error(`Failed to copy the ${what.toLowerCase()}`, error);
+        showToast(`Could not copy the ${what.toLowerCase()}.`, "error");
+      },
+    );
+  };
 }

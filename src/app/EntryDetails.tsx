@@ -19,10 +19,9 @@ import { addEntry, editEntry } from "../lib/catalog";
 import type { Entry } from "../lib/model";
 import type { EntryInput } from "../lib/validation";
 import type { CatalogRepository } from "../storage/repository";
-import { copyText } from "./actions";
+import { useCopy } from "./actions";
 import { Button } from "./components/Button";
 import { TextArea, TextField } from "./components/TextField";
-import { useToast } from "./components/Toast";
 import { EntryIcon } from "./EntryIcon";
 import { outcomeMessage, run } from "./update";
 
@@ -74,17 +73,7 @@ export function EntryView({
   onDelete,
 }: EntryViewProps) {
   const [revealed, setRevealed] = useState(false);
-  const showToast = useToast();
-
-  function copy(text: string, what: "Username" | "Password") {
-    copyText(text).then(
-      () => showToast(`${what} copied`),
-      (error: unknown) => {
-        console.error(`Failed to copy the ${what.toLowerCase()}`, error);
-        showToast(`Could not copy the ${what.toLowerCase()}.`, "error");
-      },
-    );
-  }
+  const copy = useCopy();
 
   return (
     <article className="details">
