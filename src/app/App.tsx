@@ -20,6 +20,7 @@ import {
   needsOpenAllConfirmation,
   type StoredSettings,
 } from "../lib/settings";
+import { countOpen } from "../lib/tabs";
 import type { CatalogRepository, LoadResult } from "../storage/repository";
 import type { SettingsRepository } from "../storage/settings";
 import { openUrl, openUrls } from "./actions";
@@ -310,6 +311,19 @@ function Catalog({
       ),
     [catalog, topics],
   );
+  const openCounts = useMemo(
+    () =>
+      new Map(
+        topics.map((topic) => [
+          topic.id,
+          countOpen(
+            catalog.entries.filter((entry) => entry.topicId === topic.id),
+            openOrigins,
+          ),
+        ]),
+      ),
+    [catalog, topics, openOrigins],
+  );
   // A topic deleted here or in another tab falls back to the first one
   const selected = topics.find((topic) => topic.id === selectedId) ?? topics[0];
   const entries = useMemo(
@@ -429,6 +443,7 @@ function Catalog({
           <TopicsPane
             topics={topics}
             entryCounts={entryCounts}
+            openCounts={openCounts}
             selectedId={selected?.id}
             onSelect={selectTopic}
             // A new topic is selected after creation, which leaves the form

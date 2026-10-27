@@ -296,4 +296,4 @@ Recorded in the root `CLAUDE.md`.
 
 Development and verification run in Linux (WSL2) with Node.js 24 and
 Playwright's bundled Chromium. Google Chrome itself is not installed there; the
-final manual check happens in the user's own Chrome (tasks 4.3 and 5.5).
+final manual check happens in the user's own Chrome (tasks 4.3 and 5.6).

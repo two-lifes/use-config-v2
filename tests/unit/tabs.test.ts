@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { isOpen, tabOrigin } from "../../src/lib/tabs";
+import { countOpen, isOpen, tabOrigin } from "../../src/lib/tabs";
 
 test.describe("tabOrigin", () => {
   test("returns the origin of an http(s) URL", () => {
@@ -47,5 +47,33 @@ test.describe("isOpen", () => {
 
   test("is false with no open tabs", () => {
     expect(isOpen("https://example.com/", new Set())).toBe(false);
+  });
+});
+
+test.describe("countOpen", () => {
+  const open = new Set(["https://example.com"]);
+
+  test("counts the entries whose origin has a tab", () => {
+    const entries = [
+      { url: "https://example.com/a" },
+      { url: "https://example.com/b" },
+      { url: "https://www.example.com/" },
+      { url: "http://example.com/" },
+    ].map((fields, index) => ({
+      id: String(index),
+      topicId: "t",
+      name: `Entry ${index}`,
+      description: "",
+      username: "",
+      password: "",
+      extraUrl: "",
+      twoFactorNote: "",
+      createdAt: "2026-10-28T00:00:00.000Z",
+      updatedAt: "2026-10-28T00:00:00.000Z",
+      ...fields,
+    }));
+    expect(countOpen(entries, open)).toBe(2);
+    expect(countOpen(entries, new Set())).toBe(0);
+    expect(countOpen([], open)).toBe(0);
   });
 });

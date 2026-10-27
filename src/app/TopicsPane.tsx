@@ -8,6 +8,8 @@ interface TopicsPaneProps {
   // Sorted by name and never empty: an empty catalog shows the welcome state
   topics: Topic[];
   entryCounts: ReadonlyMap<string, number>;
+  // Entries of each topic open in a browser tab (D-25)
+  openCounts: ReadonlyMap<string, number>;
   selectedId: string | undefined;
   onSelect: (topicId: string) => void;
   onCreate: () => void;
@@ -18,6 +20,7 @@ interface TopicsPaneProps {
 export function TopicsPane({
   topics,
   entryCounts,
+  openCounts,
   selectedId,
   onSelect,
   onCreate,
@@ -32,6 +35,7 @@ export function TopicsPane({
       <ul className="topic-list" onKeyDown={moveFocus(".topic-list__select")}>
         {topics.map((topic) => {
           const selected = topic.id === selectedId;
+          const open = openCounts.get(topic.id) ?? 0;
           return (
             <li
               key={topic.id}
@@ -48,6 +52,16 @@ export function TopicsPane({
                 onClick={() => onSelect(topic.id)}
               >
                 <span className="topic-list__name">{topic.name}</span>
+                {!selected && open > 0 && (
+                  <span
+                    className="topic-list__open"
+                    role="img"
+                    aria-label={`${open} open in tabs`}
+                    title={`${open} open in tabs`}
+                  >
+                    {open}
+                  </span>
+                )}
                 {!selected && (
                   <span className="topic-list__count">
                     {entryCounts.get(topic.id) ?? 0}

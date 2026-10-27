@@ -109,9 +109,15 @@ implementing and adjust the values if needed.
   `:focus-within` when focus came from the keyboard (`:focus-visible`). Showing
   them does not change the row height or shift the text; the name and host
   are truncated with an ellipsis instead.
-- **Open tab indicator** (D-22): an 8 px dot in `--success` with a 2 px
+- **Open tab indicator** (D-22, D-25): a 10 px dot in `--success` with a 2 px
   `--surface` ring at the bottom right of the favicon or letter avatar; tooltip
-  and accessible name "Open in a tab".
+  and accessible name "Open in a tab". The row also gets a 3 px `--success`
+  bar on the left; a selected open row shows the accent bar of the selection
+  instead, and the dot stays.
+- **Topic open count** (D-25): on a topic row that is not selected, before the
+  entry count, an 8 px `--success` dot and the number of open entries in
+  secondary text, only when the number is above 0; tooltip and accessible name
+  "N open in tabs". The selected row shows its actions instead, as before.
 - **Details**: entry name 20 px weight 600; fields as label/value rows with
   actions aligned right; masked password shown as 8 dots regardless of length.
 - **Dialogs**: native `<dialog>` with a focus trap provided by the browser;

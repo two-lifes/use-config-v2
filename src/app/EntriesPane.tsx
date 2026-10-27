@@ -136,14 +136,17 @@ function EntryList({
     <ul className="entry-list" onKeyDown={moveFocus(".entry-list__select")}>
       {rows.map(({ entry, detail }) => {
         const selected = entry.id === selectedId;
+        const open = isOpen(entry.url, openOrigins);
         return (
           <li
             key={entry.id}
-            className={
-              selected
-                ? "entry-list__item entry-list__item--selected"
-                : "entry-list__item"
-            }
+            className={[
+              "entry-list__item",
+              selected && "entry-list__item--selected",
+              open && "entry-list__item--open",
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
             <button
               type="button"
@@ -153,7 +156,7 @@ function EntryList({
             >
               <span className="entry-icon-wrap">
                 <EntryIcon key={entry.url} name={entry.name} url={entry.url} />
-                {isOpen(entry.url, openOrigins) && (
+                {open && (
                   <span
                     className="entry-open-mark"
                     role="img"

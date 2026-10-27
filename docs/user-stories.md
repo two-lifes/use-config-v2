@@ -159,4 +159,7 @@ As a user, I see which of my websites are already open.
 - Opening, navigating or closing a tab updates the mark without reloading the
   extension tab.
 - The mark has a text alternative ("Open in a tab") for screen readers and a
-  tooltip.
+  tooltip. The row of an open entry also has a green bar on the left (D-25).
+- Every topic row except the selected one shows the number of its open entries
+  before the entry count when it is above 0, with a text alternative and a
+  tooltip ("2 open in tabs"); it updates with the tabs (D-25).

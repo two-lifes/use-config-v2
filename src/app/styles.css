@@ -365,6 +365,22 @@ textarea.field__control {
   font-size: var(--text-secondary);
 }
 
+.topic-list__open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-muted);
+  font-size: var(--text-secondary);
+}
+
+.topic-list__open::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--success);
+}
+
 .topic-list__actions {
   display: flex;
   padding-right: var(--space-1);
@@ -398,6 +414,7 @@ textarea.field__control {
   background: var(--surface-selected);
 }
 
+.entry-list__item--open::before,
 .entry-list__item--selected::before {
   content: "";
   position: absolute;
@@ -407,6 +424,11 @@ textarea.field__control {
   width: 3px;
   border-radius: var(--radius-pill);
   background: var(--accent);
+}
+
+/* The selection bar wins; the dot on the icon still shows the open tab (D-25) */
+.entry-list__item--open:not(.entry-list__item--selected)::before {
+  background: var(--success);
 }
 
 .entry-list__select {
@@ -501,8 +523,8 @@ textarea.field__control {
   position: absolute;
   right: -2px;
   bottom: -2px;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: var(--radius-pill);
   background: var(--success);
   box-shadow: 0 0 0 2px var(--surface);

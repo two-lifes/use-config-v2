@@ -87,7 +87,8 @@ the first topic. The plaintext storage note is shown here once.
   Settings (default 10) asks for confirmation showing the number (D-21).
 - Each entry in the entries pane shows whether a tab with its website is open
   right now; the mark appears and disappears as tabs are opened, navigated and
-  closed (D-22).
+  closed (D-22). The topics pane shows how many entries of each topic are open
+  (D-25).
 - Opening a tab does not sign in, select an account or check that the site
   loaded.
 

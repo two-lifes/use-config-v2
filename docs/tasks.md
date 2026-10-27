@@ -4,8 +4,8 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: the MVP (stages 1–4, C1–C4) is done. Stage 5 (improvements) is in
-progress: 5.1–5.4 are done; the next task is 5.5.
+Status: the MVP (stages 1–4, C1–C4) and stage 5 (improvements, C5) are done;
+the extension is at version 1.1.0. No tasks are planned.
 
 ## Rules
 
@@ -115,6 +115,7 @@ progress: 5.1–5.4 are done; the next task is 5.5.
 ## 5. Improvements
 
 Requested by the user on 2026-10-27 after the MVP; decisions D-19–D-24.
+D-25 was added on 2026-10-28 after the user's first look at the indicator.
 
 - [x] 5.1. Visual fixes from [design.md](design.md): the entry form column at
   most 560 px wide; the header with the logo, the name and the search field
@@ -131,9 +132,20 @@ Requested by the user on 2026-10-27 after the MVP; decisions D-19–D-24.
   `src/lib`, tab tracking in the extension tab, the mark in the entries pane
   and search results (D-19, D-22, US-15). `README.md` explains the
   "Read your browsing history" warning.
-- [ ] 5.5. Manual check by the user in their own Chrome: the permission
-  warning, the indicator with real tabs, quick actions, settings and the
-  visual fixes; record the result.
+- [x] 5.5. Open tab indicator refinements: the bar on open entry rows, the
+  larger dot and the open count in the topics pane (D-25, US-15).
+- [x] 5.6. Manual check by the user in their own Chrome: the permission
+  warning, the indicator with real tabs (including 5.5), quick actions,
+  settings and the visual fixes; record the result.
+  Done 2026-10-28: the user loaded `dist/` unpacked in Google Chrome on Windows
+  and confirmed the scenarios. The permission shows as "Read your browsing
+  history" in the extension details; an unpacked reload does not ask for it.
+  The first look found the indicator too small, which led to D-25 and 5.5;
+  the user accepted the result. Version raised to 1.1.0 at the user's request.
 
-- [ ] **C5:** US-06 (changed) and US-13–US-15 are covered by passing end-to-end
-  tests, `npm run check` passes, and the user has confirmed 5.5.
+- [x] **C5:** US-06 (changed) and US-13–US-15 are covered by passing end-to-end
+  tests, `npm run check` passes, and the user has confirmed 5.6.
+  Closed 2026-10-28: Linux (WSL2), Node.js 24.22.1, Playwright 1.64.1 with its
+  bundled Chromium (headless); `npm run check` passed (typecheck, lint, format
+  check, 124 unit tests, build, 99 end-to-end tests); manual check in the
+  user's Chrome passed (5.6).

@@ -1,3 +1,5 @@
+import type { Entry } from "./model";
+
 // An entry is open when some tab has the origin of its URL (D-22). Only
 // http(s) tabs count, which also leaves out the extension's own tabs.
 export function tabOrigin(url: string | undefined): string | undefined {
@@ -20,4 +22,12 @@ export function isOpen(
 ): boolean {
   const origin = tabOrigin(entryUrl);
   return origin !== undefined && openOrigins.has(origin);
+}
+
+// Shown next to the entry count of a topic (D-25)
+export function countOpen(
+  entries: readonly Entry[],
+  openOrigins: ReadonlySet<string>,
+): number {
+  return entries.filter((entry) => isOpen(entry.url, openOrigins)).length;
 }

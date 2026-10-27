@@ -39,6 +39,7 @@ improvements of stage 5 ([tasks.md](tasks.md#5-improvements)).
 | D-22 | An entry counts as open when some browser tab has the same origin (scheme, host and port) as the entry's URL. The additional URL is not considered. The indicator updates in real time from tab events, without reloading. | Agreed |
 | D-23 | Quick actions in each entry row of the entries pane: Open URL, Copy username, Copy password. They appear when the pointer hovers the row and when keyboard focus is inside the row; otherwise they are hidden. | Agreed |
 | D-24 | Custom scrollbars with the standard `scrollbar-width` and `scrollbar-color` properties and theme tokens, no `::-webkit-scrollbar` rules. These need Chrome 121, so `minimum_chrome_version` becomes `"121"`. | Delegated |
+| D-25 | The open-tab indicator is easier to see: an open entry's row has a 3 px `--success` bar on the left and a 10 px dot on the icon. Every topic row except the selected one shows a dot and the number of its open entries (D-22) before the entry count when that number is above 0. | Agreed |
 
 ## Open questions
 
