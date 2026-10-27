@@ -313,6 +313,8 @@ textarea {
 
 .entry-list__item {
   position: relative;
+  display: flex;
+  align-items: center;
   border-radius: var(--radius-control);
   transition: background-color var(--motion);
 }
@@ -339,9 +341,10 @@ textarea {
 
 .entry-list__select {
   display: flex;
+  flex: 1;
   align-items: center;
   gap: var(--space-3);
-  width: 100%;
+  min-width: 0;
   height: 48px;
   padding: 0 var(--space-3);
   border: 0;
@@ -349,6 +352,11 @@ textarea {
   background: transparent;
   text-align: left;
   cursor: pointer;
+}
+
+.entry-list__actions {
+  display: flex;
+  padding-right: var(--space-2);
 }
 
 .entry-list__text {
@@ -423,8 +431,19 @@ textarea {
 
 .details__row {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  align-items: start;
   gap: var(--space-3);
+}
+
+.details__row-actions {
+  display: flex;
+  gap: var(--space-1);
+  margin: -6px 0;
+}
+
+.details__not-set {
+  color: var(--text-muted);
 }
 
 .details__label {
@@ -648,8 +667,12 @@ textarea.field__control {
   animation: toast-in var(--motion);
 }
 
-.toast__icon {
+.toast--success .toast__icon {
   color: var(--success);
+}
+
+.toast--error .toast__icon {
+  color: var(--danger);
 }
 
 @keyframes toast-in {

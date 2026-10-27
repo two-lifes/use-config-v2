@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–2 are done (C1, C2 closed); 3.1–3.4 are done. The next task is 3.5.
+Status: stages 1–2 are done (C1, C2 closed); 3.1–3.5 are done. The next task is 3.6.
 
 ## Rules
 
@@ -77,7 +77,7 @@ Status: stages 1–2 are done (C1, C2 closed); 3.1–3.4 are done. The next task
   changes guard (D-09) (US-03, US-04, US-05).
 - [x] 3.4. Search: header field, `Ctrl+F`/`Cmd+F`, `Escape`, results with topic
   names, empty state with Clear search (US-08).
-- [ ] 3.5. Actions: open URL and additional URL, Open all with confirmation over
+- [x] 3.5. Actions: open URL and additional URL, Open all with confirmation over
   10, copy username and password with toast, reveal toggle (US-06, US-07).
 - [ ] 3.6. Export and import UI: menu, warning, replace confirmation with
   counts, error messages; storage error states in the UI (US-09, US-10,

@@ -8,14 +8,16 @@ import {
 } from "../lib/catalog";
 import type { Entry, StoredCatalog, Topic } from "../lib/model";
 import type { CatalogRepository, LoadResult } from "../storage/repository";
+import { OPEN_ALL_CONFIRM_LIMIT, openUrl, openUrls } from "./actions";
 import { Button } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
-import { ToastProvider } from "./components/Toast";
+import { ToastProvider, useToast } from "./components/Toast";
 import { EntriesPane, SearchResultsPane } from "./EntriesPane";
 import {
   DeleteEntryDialog,
   DiscardChangesDialog,
   MoveEntryDialog,
+  OpenAllDialog,
 } from "./EntryDialogs";
 import { EntryForm, EntryView } from "./EntryDetails";
 import { Header } from "./Header";
@@ -96,7 +98,8 @@ type CatalogDialog =
   | { kind: "delete"; topic: Topic }
   | { kind: "delete-entry"; entry: Entry }
   | { kind: "move-entry"; entry: Entry }
-  | { kind: "discard"; proceed: () => void };
+  | { kind: "discard"; proceed: () => void }
+  | { kind: "open-all"; topic: Topic; urls: string[] };
 
 type DetailsMode = "view" | "add" | "edit";
 
@@ -121,6 +124,7 @@ function Catalog({
     open: boolean;
     key: number;
   }>();
+  const showToast = useToast();
 
   const topics = useMemo(() => sortTopics(catalog.topics), [catalog.topics]);
   const entryCounts = useMemo(
@@ -207,6 +211,26 @@ function Catalog({
     });
   const onDirtyChange = useCallback((value: boolean) => setDirty(value), []);
 
+  // A single site opens in front, like following a link
+  const openOne = (url: string) => {
+    openUrl(url, true).catch((error: unknown) => {
+      console.error("Failed to open the URL", error);
+      showToast("Could not open the URL.", "error");
+    });
+  };
+  const openMany = (urls: string[]) => {
+    openUrls(urls).catch((error: unknown) => {
+      console.error("Failed to open the URLs", error);
+      showToast("Could not open all URLs.", "error");
+    });
+  };
+  const openAll = (topic: Topic) => {
+    const urls = entries.map((entry) => entry.url);
+    if (urls.length > OPEN_ALL_CONFIRM_LIMIT)
+      open({ kind: "open-all", topic, urls });
+    else openMany(urls);
+  };
+
   return (
     <>
       {topics.length === 0 ? (
@@ -235,6 +259,7 @@ function Catalog({
               results={results}
               selectedId={selectedEntry?.id}
               onSelect={selectEntry}
+              onOpen={openOne}
               onClear={() => changeQuery("")}
             />
           ) : (
@@ -244,6 +269,8 @@ function Catalog({
                 entries={entries}
                 selectedId={shownMode === "add" ? undefined : selectedEntry?.id}
                 onSelect={selectEntry}
+                onOpen={openOne}
+                onOpenAll={() => openAll(selected)}
                 onAdd={addEntry}
               />
             )
@@ -261,8 +288,10 @@ function Catalog({
               />
             ) : selectedEntry ? (
               <EntryView
+                key={selectedEntry.id}
                 entry={selectedEntry}
                 canMove={topics.length > 1}
+                onOpen={openOne}
                 onEdit={() => {
                   setMode("edit");
                   setFormKey((key) => key + 1);
@@ -303,6 +332,7 @@ function Catalog({
             setMode("view");
             proceed();
           }}
+          onOpenAll={openMany}
           close={close}
         />
       )}
@@ -319,6 +349,7 @@ function CatalogDialogs({
   onEntryRemoved,
   onEntryMoved,
   onDiscard,
+  onOpenAll,
   close,
 }: {
   dialog: { value: CatalogDialog; open: boolean; key: number };
@@ -329,6 +360,7 @@ function CatalogDialogs({
   onEntryRemoved: () => void;
   onEntryMoved: () => void;
   onDiscard: (proceed: () => void) => void;
+  onOpenAll: (urls: string[]) => void;
   close: () => void;
 }) {
   const { value, open, key } = dialog;
@@ -399,6 +431,20 @@ function CatalogDialogs({
             onDiscard(value.proceed);
           }}
           onKeepEditing={close}
+        />
+      );
+    case "open-all":
+      return (
+        <OpenAllDialog
+          key={key}
+          open={open}
+          topic={value.topic}
+          count={value.urls.length}
+          onOpenAll={() => {
+            close();
+            onOpenAll(value.urls);
+          }}
+          onCancel={close}
         />
       );
   }

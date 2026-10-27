@@ -1,4 +1,12 @@
-import { FolderInput, Pencil, Trash2 } from "lucide-react";
+import {
+  Copy,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  FolderInput,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import {
   useEffect,
   useState,
@@ -11,8 +19,10 @@ import { addEntry, editEntry } from "../lib/catalog";
 import type { Entry } from "../lib/model";
 import type { EntryInput } from "../lib/validation";
 import type { CatalogRepository } from "../storage/repository";
+import { copyText } from "./actions";
 import { Button } from "./components/Button";
 import { TextArea, TextField } from "./components/TextField";
+import { useToast } from "./components/Toast";
 import { EntryIcon } from "./EntryIcon";
 import { outcomeMessage, run } from "./update";
 
@@ -22,6 +32,7 @@ const MASKED_PASSWORD = "••••••••";
 interface EntryViewProps {
   entry: Entry;
   canMove: boolean;
+  onOpen: (url: string) => void;
   onEdit: () => void;
   onMove: () => void;
   onDelete: () => void;
@@ -30,10 +41,12 @@ interface EntryViewProps {
 function DetailRow({
   label,
   className,
+  actions,
   children,
 }: {
   label: string;
   className?: string;
+  actions?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -42,17 +55,37 @@ function DetailRow({
       <dd className={["details__value", className].filter(Boolean).join(" ")}>
         {children}
       </dd>
+      {actions && <dd className="details__row-actions">{actions}</dd>}
     </div>
   );
 }
 
+function NotSet() {
+  return <span className="details__not-set">Not set</span>;
+}
+
+// Selecting another entry remounts the view, which masks the password again
 export function EntryView({
   entry,
   canMove,
+  onOpen,
   onEdit,
   onMove,
   onDelete,
 }: EntryViewProps) {
+  const [revealed, setRevealed] = useState(false);
+  const showToast = useToast();
+
+  function copy(text: string, what: "Username" | "Password") {
+    copyText(text).then(
+      () => showToast(`${what} copied`),
+      (error: unknown) => {
+        console.error(`Failed to copy the ${what.toLowerCase()}`, error);
+        showToast(`Could not copy the ${what.toLowerCase()}.`, "error");
+      },
+    );
+  }
+
   return (
     <article className="details">
       <div className="details__heading">
@@ -60,17 +93,89 @@ export function EntryView({
         <h3 className="details__name">{entry.name}</h3>
       </div>
       <dl className="details__fields">
-        <DetailRow label="URL" className="details__value--mono">
+        <DetailRow
+          label="URL"
+          className="details__value--mono"
+          actions={
+            <Button
+              variant="ghost"
+              icon={ExternalLink}
+              aria-label="Open URL"
+              onClick={() => onOpen(entry.url)}
+            >
+              Open
+            </Button>
+          }
+        >
           {entry.url}
         </DetailRow>
-        {entry.username && (
-          <DetailRow label="Username">{entry.username}</DetailRow>
-        )}
-        {entry.password && (
-          <DetailRow label="Password">{MASKED_PASSWORD}</DetailRow>
-        )}
+        <DetailRow
+          label="Username"
+          actions={
+            <Button
+              variant="ghost"
+              icon={Copy}
+              aria-label="Copy username"
+              disabled={!entry.username}
+              onClick={() => copy(entry.username, "Username")}
+            >
+              Copy
+            </Button>
+          }
+        >
+          {entry.username || <NotSet />}
+        </DetailRow>
+        <DetailRow
+          label="Password"
+          className={
+            entry.password && revealed ? "details__value--mono" : undefined
+          }
+          actions={
+            <>
+              <Button
+                variant="ghost"
+                icon={revealed ? EyeOff : Eye}
+                aria-label={revealed ? "Hide password" : "Show password"}
+                disabled={!entry.password}
+                onClick={() => setRevealed((value) => !value)}
+              >
+                {revealed ? "Hide" : "Show"}
+              </Button>
+              <Button
+                variant="ghost"
+                icon={Copy}
+                aria-label="Copy password"
+                disabled={!entry.password}
+                onClick={() => copy(entry.password, "Password")}
+              >
+                Copy
+              </Button>
+            </>
+          }
+        >
+          {!entry.password ? (
+            <NotSet />
+          ) : revealed ? (
+            entry.password
+          ) : (
+            MASKED_PASSWORD
+          )}
+        </DetailRow>
         {entry.extraUrl && (
-          <DetailRow label="Additional URL" className="details__value--mono">
+          <DetailRow
+            label="Additional URL"
+            className="details__value--mono"
+            actions={
+              <Button
+                variant="ghost"
+                icon={ExternalLink}
+                aria-label="Open additional URL"
+                onClick={() => onOpen(entry.extraUrl)}
+              >
+                Open
+              </Button>
+            }
+          >
             {entry.extraUrl}
           </DetailRow>
         )}

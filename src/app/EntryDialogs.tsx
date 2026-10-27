@@ -182,3 +182,38 @@ export function DiscardChangesDialog({
     </Dialog>
   );
 }
+
+interface OpenAllDialogProps {
+  open: boolean;
+  topic: Topic;
+  count: number;
+  onOpenAll: () => void;
+  onCancel: () => void;
+}
+
+// Asked only when Open all would open more tabs than the limit (US-06)
+export function OpenAllDialog({
+  open,
+  topic,
+  count,
+  onOpenAll,
+  onCancel,
+}: OpenAllDialogProps) {
+  return (
+    <Dialog
+      open={open}
+      title={`Open ${count} tabs?`}
+      onCancel={onCancel}
+      actions={
+        <>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button variant="primary" onClick={onOpenAll}>
+            Open all
+          </Button>
+        </>
+      }
+    >
+      <p>Every entry in “{topic.name}” will open in a new tab.</p>
+    </Dialog>
+  );
+}

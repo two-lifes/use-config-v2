@@ -59,9 +59,10 @@ The service worker finds an open extension tab with
 
 ### Opening websites
 
-`chrome.tabs.create({ url, active })` from the extension tab. The first tab of
-"Open all" is not activated, so the extension tab stays in front (adjust if the
-user prefers otherwise). Only `http:` and `https:` URLs are passed; the URL is
+`chrome.tabs.create({ url, active })` from the extension tab. Open URL and
+Open additional URL activate the new tab, like following a link. The tabs of
+"Open all" are not activated, so the extension tab stays in front (confirmed by
+the user on 2026-10-27). Only `http:` and `https:` URLs are passed; the URL is
 validated again right before opening.
 
 ### Favicons
@@ -212,6 +213,8 @@ Implemented in `src/storage/repository.ts`.
   open-or-focus function, and the test calls it through `serviceWorker.evaluate`.
 - Clipboard tests grant `clipboard-read` and `clipboard-write` to the test
   context and read the text back.
+- Tests that open websites serve them from a local HTTP server: a tab created by
+  `chrome.tabs.create` starts loading before Playwright can route its requests.
 - Each test uses a fresh profile directory, so storage starts empty.
 
 ## Commands

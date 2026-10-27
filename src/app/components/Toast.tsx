@@ -1,4 +1,4 @@
-import { CircleCheck } from "lucide-react";
+import { CircleAlert, CircleCheck } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -11,13 +11,16 @@ import {
 
 const TOAST_DURATION_MS = 2500;
 
-type ShowToast = (message: string) => void;
+type ToastTone = "success" | "error";
+
+type ShowToast = (message: string, tone?: ToastTone) => void;
 
 const ToastContext = createContext<ShowToast | null>(null);
 
 interface ToastState {
   id: number;
   message: string;
+  tone: ToastTone;
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -25,9 +28,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const nextId = useRef(0);
 
   // A new toast replaces the current one, so only one is visible
-  const show = useCallback<ShowToast>((message) => {
+  const show = useCallback<ShowToast>((message, tone = "success") => {
     nextId.current += 1;
-    setToast({ id: nextId.current, message });
+    setToast({ id: nextId.current, message, tone });
   }, []);
 
   useEffect(() => {
@@ -42,8 +45,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {/* The live region stays mounted so screen readers announce changes */}
       <div className="toast-region" role="status">
         {toast && (
-          <div className="toast" key={toast.id}>
-            <CircleCheck className="toast__icon" size={16} />
+          <div className={`toast toast--${toast.tone}`} key={toast.id}>
+            {toast.tone === "error" ? (
+              <CircleAlert className="toast__icon" size={16} />
+            ) : (
+              <CircleCheck className="toast__icon" size={16} />
+            )}
             {toast.message}
           </div>
         )}

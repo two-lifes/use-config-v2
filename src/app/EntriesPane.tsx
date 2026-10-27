@@ -1,4 +1,4 @@
-import { KeyRound, Plus, SearchX } from "lucide-react";
+import { ExternalLink, KeyRound, Plus, SearchX } from "lucide-react";
 import type { SearchResult } from "../lib/catalog";
 import type { Entry, Topic } from "../lib/model";
 import { Button, IconButton } from "./components/Button";
@@ -13,6 +13,8 @@ interface EntriesPaneProps {
   entries: Entry[];
   selectedId: string | undefined;
   onSelect: (entryId: string) => void;
+  onOpen: (url: string) => void;
+  onOpenAll: () => void;
   onAdd: () => void;
 }
 
@@ -26,12 +28,25 @@ export function EntriesPane({
   entries,
   selectedId,
   onSelect,
+  onOpen,
+  onOpenAll,
   onAdd,
 }: EntriesPaneProps) {
   return (
     <Pane
       title={topic.name}
-      actions={<IconButton label="Add entry" icon={Plus} onClick={onAdd} />}
+      actions={
+        <>
+          <Button
+            variant="ghost"
+            disabled={entries.length === 0}
+            onClick={onOpenAll}
+          >
+            Open all
+          </Button>
+          <IconButton label="Add entry" icon={Plus} onClick={onAdd} />
+        </>
+      }
     >
       {entries.length === 0 ? (
         <EmptyState
@@ -48,6 +63,7 @@ export function EntriesPane({
           rows={entries.map((entry) => ({ entry, detail: host(entry.url) }))}
           selectedId={selectedId}
           onSelect={onSelect}
+          onOpen={onOpen}
         />
       )}
     </Pane>
@@ -59,6 +75,7 @@ interface SearchResultsPaneProps {
   results: SearchResult[];
   selectedId: string | undefined;
   onSelect: (entryId: string) => void;
+  onOpen: (url: string) => void;
   onClear: () => void;
 }
 
@@ -66,6 +83,7 @@ export function SearchResultsPane({
   results,
   selectedId,
   onSelect,
+  onOpen,
   onClear,
 }: SearchResultsPaneProps) {
   return (
@@ -84,6 +102,7 @@ export function SearchResultsPane({
           }))}
           selectedId={selectedId}
           onSelect={onSelect}
+          onOpen={onOpen}
         />
       )}
     </Pane>
@@ -94,10 +113,12 @@ function EntryList({
   rows,
   selectedId,
   onSelect,
+  onOpen,
 }: {
   rows: { entry: Entry; detail: string }[];
   selectedId: string | undefined;
   onSelect: (entryId: string) => void;
+  onOpen: (url: string) => void;
 }) {
   return (
     <ul className="entry-list" onKeyDown={moveFocus(".entry-list__select")}>
@@ -124,6 +145,16 @@ function EntryList({
                 <span className="entry-list__host">{detail}</span>
               </span>
             </button>
+            {/* Like the topic actions, only the selected row has one */}
+            {selected && (
+              <span className="entry-list__actions">
+                <IconButton
+                  label="Open URL"
+                  icon={ExternalLink}
+                  onClick={() => onOpen(entry.url)}
+                />
+              </span>
+            )}
           </li>
         );
       })}
