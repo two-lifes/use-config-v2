@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–3 are done (C1–C3 closed). Tasks 4.1 and 4.2 are done. The next task is 4.3.
+Status: all stages are done (C1–C4 closed). The MVP plan is complete.
 
 ## Rules
 
@@ -98,8 +98,15 @@ Status: stages 1–3 are done (C1–C3 closed). Tasks 4.1 and 4.2 are done. The 
 - [x] 4.2. Packaging: pin the extension ID with a manifest `key` (D-12), final
   name and icons (open question 1), version 1.0.0, `README.md` with build and
   "Load unpacked" instructions and the backup advice.
-- [ ] 4.3. Manual check by the user in their own Chrome: load `dist/` unpacked,
+- [x] 4.3. Manual check by the user in their own Chrome: load `dist/` unpacked,
   go through the main scenarios, the leave-page prompt (US-04) and export/import
   with a real file; record the result.
+  Done 2026-10-27: the user loaded `dist/` unpacked in Google Chrome on Windows
+  and confirmed the main scenarios, the leave-page prompt and export/import
+  with a real file; no findings.
 
-- [ ] **C4:** the MVP meets the [definition of done](product.md#6-definition-of-done-for-the-mvp).
+- [x] **C4:** the MVP meets the [definition of done](product.md#6-definition-of-done-for-the-mvp).
+  Closed 2026-10-27: Linux (WSL2), Node.js 24.22.1, Playwright 1.64.1 with its
+  bundled Chromium 156 (headless); `npm run check` passed (typecheck, lint,
+  format check, 108 unit tests, build, 75 end-to-end tests); manual check in
+  the user's Chrome passed (4.3).
