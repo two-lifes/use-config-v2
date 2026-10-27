@@ -46,8 +46,9 @@ test("a catalog with topics shows the three panes", async ({
     ),
   );
 
-  // The page follows storage changes without a reload
-  for (const name of ["Topics", "Entries", "Details"]) {
+  // The page follows storage changes without a reload; the entries pane is
+  // titled with the selected topic
+  for (const name of ["Topics", "Work", "Details"]) {
     await expect(page.getByRole("region", { name })).toBeVisible();
   }
   await expect(

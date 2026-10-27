@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–2 are done (C1, C2 closed); 3.1–3.2 are done. The next task is 3.3.
+Status: stages 1–2 are done (C1, C2 closed); 3.1–3.3 are done. The next task is 3.4.
 
 ## Rules
 
@@ -72,7 +72,7 @@ Status: stages 1–2 are done (C1, C2 closed); 3.1–3.2 are done. The next task
   note (US-01).
 - [x] 3.2. Topics pane: create, rename, delete with entry count confirmation,
   selection, sorting, validation messages (US-02).
-- [ ] 3.3. Entries pane and details: list with favicons and letter avatars,
+- [x] 3.3. Entries pane and details: list with favicons and letter avatars,
   details view, add and edit form with validation, delete, move, unsaved
   changes guard (D-09) (US-03, US-04, US-05).
 - [ ] 3.4. Search: header field, `Ctrl+F`/`Cmd+F`, `Escape`, results with topic

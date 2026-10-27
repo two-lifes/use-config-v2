@@ -98,7 +98,8 @@ implementing and adjust the values if needed.
   actions aligned right; masked password shown as 8 dots regardless of length.
 - **Dialogs**: native `<dialog>` with a focus trap provided by the browser;
   title, one or two lines of text, actions right-aligned (Cancel left of the
-  confirming action). `Escape` cancels.
+  confirming action). `Escape` cancels. Moving an entry uses a dialog with
+  a topic select (other topics only) and Cancel / Move.
 - **Toasts**: bottom center, auto-hide after 2.5 s, one at a time, announced
   with `role="status"`.
 - **Empty states**: an icon, one sentence and at most one action, centered in

@@ -1,7 +1,7 @@
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import type { KeyboardEvent } from "react";
 import type { Topic } from "../lib/model";
 import { IconButton } from "./components/Button";
+import { moveFocus } from "./listKeys";
 import { Pane } from "./Pane";
 
 interface TopicsPaneProps {
@@ -29,7 +29,7 @@ export function TopicsPane({
       title="Topics"
       actions={<IconButton label="New topic" icon={Plus} onClick={onCreate} />}
     >
-      <ul className="topic-list" onKeyDown={moveFocus}>
+      <ul className="topic-list" onKeyDown={moveFocus(".topic-list__select")}>
         {topics.map((topic) => {
           const selected = topic.id === selectedId;
           return (
@@ -74,19 +74,4 @@ export function TopicsPane({
       </ul>
     </Pane>
   );
-}
-
-// Arrow keys move focus between topics; Enter or Space then selects one
-function moveFocus(event: KeyboardEvent<HTMLUListElement>) {
-  const step = event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0;
-  if (step === 0 || !(event.target instanceof HTMLElement)) return;
-  const item = event.target.closest("li");
-  const sibling =
-    step > 0 ? item?.nextElementSibling : item?.previousElementSibling;
-  const button = sibling?.querySelector<HTMLButtonElement>(
-    ".topic-list__select",
-  );
-  if (!button) return;
-  event.preventDefault();
-  button.focus();
 }
