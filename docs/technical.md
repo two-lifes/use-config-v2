@@ -40,11 +40,13 @@ without a browser. The UI talks to storage only through `src/storage`.
 
 ## Manifest and permissions
 
-- `manifest_version: 3`, `minimum_chrome_version: "120"` (D-02).
+- `manifest_version: 3`, `minimum_chrome_version: "121"` (D-02, D-24:
+  `scrollbar-color` and `scrollbar-width` need Chrome 121).
 - `background.service_worker: "background.js"`, `type: "module"`.
 - `action` without `default_popup`; `action.onClicked` opens or focuses the tab.
-- `permissions: ["storage", "favicon"]` (D-13). No host permissions, no `tabs`,
-  no content scripts.
+- `permissions: ["storage", "favicon", "tabs"]` (D-19). `tabs` gives access to
+  the `url` of every tab for the open-tab indicator. No host permissions, no
+  content scripts.
 - `key`: a fixed public key so that the unpacked extension keeps the same ID
   when its folder moves (D-12). The pinned ID is
   `eicjdlcomdndfepnpfpgpjloecpnkkpj` (the first 32 hex digits of the SHA-256 of
@@ -69,6 +71,24 @@ Open additional URL activate the new tab, like following a link. The tabs of
 "Open all" are not activated, so the extension tab stays in front (confirmed by
 the user on 2026-10-27). Only `http:` and `https:` URLs are passed; the URL is
 validated again right before opening.
+
+### Open tab tracking
+
+The open-tab indicator (D-22, US-15) runs in the extension tab, not in the
+service worker:
+
+- On start, `chrome.tabs.query({})` reads all tabs; `chrome.tabs.onCreated`,
+  `onUpdated` (when `changeInfo.url` is present) and `onRemoved` keep a map
+  from tab ID to origin up to date. Listeners are removed when the page
+  unloads.
+- An entry is open when the set of tab origins contains the origin of its URL.
+  Origins are compared with a pure function in `src/lib` that parses both
+  URLs with `URL` and compares `origin` (scheme, host and port; default ports
+  normalized by `URL`). Non-`http(s)` tabs, the extension's own tabs and
+  unparsable URLs are ignored. Tabs of all windows of the profile count;
+  incognito tabs are not visible to the extension unless the user allows it.
+- The set of open origins is React state; recomputing the marks for the shown
+  entries is a set lookup per entry, so large catalogs stay cheap.
 
 ### Favicons
 
@@ -206,6 +226,28 @@ Implemented in `src/storage/repository.ts`.
 - Serialization, the file name and import parsing are pure functions in
   `src/lib/backup.ts`; the caller passes the export time.
 
+## Settings
+
+Stored under a separate key, `settings`, in `chrome.storage.local` (D-20) and
+not included in the export file:
+
+```ts
+interface StoredSettings {
+  schemaVersion: 1;
+  openAllConfirmThreshold: number; // integer 1–500, default 10 (D-21)
+}
+```
+
+- A missing key means the defaults. A stored value that fails validation is
+  ignored in favor of the defaults and is not overwritten until the user saves
+  the Settings dialog; it does not trigger the catalog error state (D-11
+  applies to the catalog only).
+- Validation and defaults are pure functions in `src/lib`; reading, writing
+  and the `onChanged` subscription live in `src/storage` next to the catalog
+  repository. Saving writes the whole settings object.
+- Open all compares the number of entries in the topic with the threshold:
+  more than the threshold asks for confirmation.
+
 ## Testing
 
 - **Unit (`tests/unit`)**: model validation, catalog operations, sorting,
@@ -227,6 +269,12 @@ Implemented in `src/storage/repository.ts`.
 - Tests that open websites serve them from a local HTTP server: a tab created by
   `chrome.tabs.create` starts loading before Playwright can route its requests.
 - Each test uses a fresh profile directory, so storage starts empty.
+- Open tab indicator tests open pages of the local HTTP server with
+  `context.newPage()` and close or navigate them, then wait for the mark to
+  appear or disappear in the extension tab.
+- Quick actions are tested with `hover()` and with keyboard focus; settings
+  tests cover validation, persistence after reload and sync between two
+  extension tabs.
 
 ## Commands
 
@@ -247,4 +295,4 @@ Recorded in the root `CLAUDE.md`.
 
 Development and verification run in Linux (WSL2) with Node.js 24 and
 Playwright's bundled Chromium. Google Chrome itself is not installed there; the
-final manual check happens in the user's own Chrome (task 4.3).
+final manual check happens in the user's own Chrome (tasks 4.3 and 5.5).

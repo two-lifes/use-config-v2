@@ -66,8 +66,9 @@ As a user, I open my websites in tabs.
 
 - Open URL and Open additional URL each open one new tab with that address.
 - Open all is disabled for an empty topic.
-- Open all with 10 or fewer entries opens one tab per entry without asking.
-- Open all with more than 10 entries asks for confirmation that states the
+- Open all with at most N entries opens one tab per entry without asking,
+  where N is the threshold from Settings (default 10, D-21).
+- Open all with more than N entries asks for confirmation that states the
   number; Cancel opens nothing.
 
 ## US-07. Copy and reveal credentials
@@ -124,3 +125,38 @@ As a user, I find an entry without remembering its topic.
   without reloading.
 - Changes to different entries made in two tabs are both kept. For the same
   entry, the last save wins.
+
+## US-13. Entry row quick actions
+
+As a user, I copy credentials without opening the entry details.
+
+- Hovering an entry row shows Open URL, Copy username and Copy password
+  buttons in the row; they are hidden when the pointer leaves the row (D-23).
+- Moving keyboard focus into the row shows the same buttons, and they are
+  reachable with `Tab`.
+- Copy username and Copy password put the exact text in the clipboard and show
+  the same toast as in the details pane. A copy button is disabled when its
+  field is empty.
+- Using a quick action does not change the selected entry and does not trigger
+  the unsaved changes prompt.
+
+## US-14. Settings
+
+- The header menu has Settings; it opens a dialog with the Open all
+  confirmation threshold (whole number from 1 to 500, default 10).
+- An invalid value shows an inline error and is not saved; Cancel changes
+  nothing.
+- A saved value applies at once, persists after reload and appears in other
+  open extension tabs.
+- Export and import do not change the settings.
+
+## US-15. Open tab indicator
+
+As a user, I see which of my websites are already open.
+
+- An entry whose URL has the same origin as some open browser tab shows an
+  "open" mark in the entries pane and in search results (D-22).
+- Opening, navigating or closing a tab updates the mark without reloading the
+  extension tab.
+- The mark has a text alternative ("Open in a tab") for screen readers and a
+  tooltip.

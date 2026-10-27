@@ -63,11 +63,11 @@ implementing and adjust the values if needed.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
-│ Clay              [ Search all entries…        Ctrl+F ]     ⋯    │  header 56px
+│ [◆] Clay  [ Search all entries…   Ctrl+F ]                  ⋯    │  header 56px
 ├──────────────┬────────────────────────┬──────────────────────────┤
 │ Topics    +  │ My VPS       Open all + │ [icon] Hetzner Console   │
 │              │                        │ https://console…   Open  │
-│ ▸ My VPS   4 │ [icon] Hetzner Console │                          │
+│ ▸ My VPS   4 │ [icon]•Hetzner  ↗ ⧉ ⧉  │                          │
 │   Banking  2 │ [icon] Proxmox         │ Username  root      Copy │
 │   Work     7 │ [icon] Grafana         │ Password  ••••  Show Copy│
 │              │                        │ 2FA note  …              │
@@ -77,6 +77,12 @@ implementing and adjust the values if needed.
    240px           320–400px               remaining width
 ```
 
+- Header: the logo (the toolbar icon, `KeyRound` on an accent rounded square,
+  24 px) and the name "Clay" on the left, then the search field right after
+  the name with a fixed width of 360 px, then free space, and the menu `⋯` at
+  the right edge. The search field is not centered.
+- In the entries pane, `•` marks an entry that is open in a tab and `↗ ⧉ ⧉`
+  are the row quick actions shown on hover or keyboard focus.
 - Panes scroll independently; the header stays fixed.
 - Supported viewport: 1024 × 640 px and larger. Below 1024 px the layout may
   scroll horizontally; narrower layouts are not a goal for the MVP.
@@ -90,23 +96,42 @@ implementing and adjust the values if needed.
   (`title`) and an `aria-label`.
 - **Inputs**: height 34 px, border `--border-input`, focus ring 2 px `--accent`.
   Labels above fields; inline error text below in `--danger`. Textareas grow
-  with content up to 12 lines.
+  with content up to 12 lines. The entry form in the details pane is a single
+  left-aligned column at most 560 px wide; fields do not stretch to the pane
+  width.
 - **List items**: 40 px rows (topics) and 48 px rows (entries with name and
   host on two lines); favicon or letter avatar 20 px; selected state uses
   `--surface-selected` and a 3 px accent bar on the left.
+- **Entry row quick actions** (D-23): ghost icon buttons 28 × 28 px at the
+  right of the row, in this order: Open URL (`ExternalLink`), Copy username
+  (`User`), Copy password (`KeyRound`), each with a tooltip and an
+  `aria-label`. Hidden by default; shown on `:hover` of the row and on
+  `:focus-within` when focus came from the keyboard (`:focus-visible`). Showing
+  them does not change the row height or shift the text; the name and host
+  are truncated with an ellipsis instead.
+- **Open tab indicator** (D-22): an 8 px dot in `--success` with a 2 px
+  `--surface` ring at the bottom right of the favicon or letter avatar; tooltip
+  and accessible name "Open in a tab".
 - **Details**: entry name 20 px weight 600; fields as label/value rows with
   actions aligned right; masked password shown as 8 dots regardless of length.
 - **Dialogs**: native `<dialog>` with a focus trap provided by the browser;
   title, one or two lines of text, actions right-aligned (Cancel left of the
   confirming action). `Escape` cancels. Moving an entry uses a dialog with
-  a topic select (other topics only) and Cancel / Move.
+  a topic select (other topics only) and Cancel / Move. The current topic is
+  shown above the select as a read-only label/value row, not as an input-like
+  box; its text is aligned with the select's text (same left padding and
+  vertical centering).
 - **Toasts**: bottom center, auto-hide after 2.5 s, one at a time, announced
   with `role="status"`.
 - **Empty states**: an icon, one sentence and at most one action, centered in
   the pane.
-- **Menu** (header `⋯`): Export, Import, About. About shows the version and the
+- **Menu** (header `⋯`): Settings, Export, Import, About. Settings is a
+  dialog with labeled fields and Cancel / Save (D-20). About shows the version and the
   plaintext storage note.
 - **Icons**: `lucide-react` (D-15), 16 px in buttons, stroke width 2.
+- **Scrollbars** (D-24): `scrollbar-width: thin` and `scrollbar-color` with the
+  thumb in `--border-input` and the track `transparent`, in both themes, for
+  the panes, dialogs and textareas.
 
 ## Keyboard
 

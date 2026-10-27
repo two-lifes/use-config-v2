@@ -4,7 +4,8 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: all stages are done (C1–C4 closed). The MVP plan is complete.
+Status: the MVP (stages 1–4, C1–C4) is done. Stage 5 (improvements) is
+planned; the next task is 5.1.
 
 ## Rules
 
@@ -110,3 +111,29 @@ Status: all stages are done (C1–C4 closed). The MVP plan is complete.
   bundled Chromium 156 (headless); `npm run check` passed (typecheck, lint,
   format check, 108 unit tests, build, 75 end-to-end tests); manual check in
   the user's Chrome passed (4.3).
+
+## 5. Improvements
+
+Requested by the user on 2026-10-27 after the MVP; decisions D-19–D-24.
+
+- [ ] 5.1. Visual fixes from [design.md](design.md): the entry form column at
+  most 560 px wide; the header with the logo, the name and the search field
+  right after the name; the current topic row in the Move dialog aligned with
+  the select; thin themed scrollbars and `minimum_chrome_version` 121 (D-24,
+  also in `README.md`).
+  Update screenshots and e2e checks of the layout where they exist.
+- [ ] 5.2. Entry row quick actions: Open URL, Copy username, Copy password on
+  hover and keyboard focus (D-23, US-13).
+- [ ] 5.3. Settings: settings model and validation in `src/lib`, storage in
+  `src/storage`, Settings dialog in the header menu, Open all confirmation
+  threshold (D-20, D-21, US-14, US-06).
+- [ ] 5.4. Open tab indicator: `tabs` permission, origin matching in
+  `src/lib`, tab tracking in the extension tab, the mark in the entries pane
+  and search results (D-19, D-22, US-15). `README.md` explains the
+  "Read your browsing history" warning.
+- [ ] 5.5. Manual check by the user in their own Chrome: the permission
+  warning, the indicator with real tabs, quick actions, settings and the
+  visual fixes; record the result.
+
+- [ ] **C5:** US-06 (changed) and US-13–US-15 are covered by passing end-to-end
+  tests, `npm run check` passes, and the user has confirmed 5.5.

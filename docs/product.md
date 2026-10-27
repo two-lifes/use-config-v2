@@ -1,6 +1,7 @@
 # Use Config v2 — Product Requirements
 
-Status: agreed with the user on 2026-10-26. This is the primary source of
+Status: agreed with the user on 2026-10-26; improvements for stage 5 added on
+2026-10-27 (D-19–D-24). This is the primary source of
 requirements. Decisions and their status are in [decisions.md](decisions.md);
 acceptance criteria are in [user-stories.md](user-stories.md); the technical
 design is in [technical.md](technical.md); visual rules are in
@@ -27,6 +28,8 @@ in browser tabs, and copies sign-in details.
 - The interface language is English. User data is stored as entered, in any
   language.
 - No server, account, network requests, telemetry or analytics.
+- The extension reads the addresses of open browser tabs only to show which
+  entries are open (D-19, D-22). Tab addresses are not stored or sent anywhere.
 
 ## 3. Data
 
@@ -54,8 +57,8 @@ in browser tabs, and copies sign-in details.
 
 ## 4. Interface and features
 
-**Layout:** a header with the product name, global search and a menu (Export,
-Import, About), and three panes: topics, entries of the selected topic, details
+**Layout:** a header with the logo and product name, global search right
+after the name, and a menu (Settings, Export, Import, About), and three panes: topics, entries of the selected topic, details
 of the selected entry. Layout and visual rules are in [design.md](design.md).
 
 **First run:** an empty catalog shows a welcome state with one action: create
@@ -78,19 +81,30 @@ the first topic. The plaintext storage note is shown here once.
 **Opening websites:**
 
 - Open the URL or the additional URL in a new tab, from the details pane or
-  with a list item action.
+  with a list item quick action.
 - "Open all" opens the URLs of every entry in the selected topic in new tabs.
-  It is disabled for an empty topic. More than 10 tabs asks for confirmation
-  showing the number.
+  It is disabled for an empty topic. More tabs than the threshold set in
+  Settings (default 10) asks for confirmation showing the number (D-21).
+- Each entry in the entries pane shows whether a tab with its website is open
+  right now; the mark appears and disappears as tabs are opened, navigated and
+  closed (D-22).
 - Opening a tab does not sign in, select an account or check that the site
   loaded.
 
 **Credentials:**
 
-- Copy username and copy password buttons; a short confirmation toast
-  appears. There are no timers and no clipboard clearing (D-06).
+- Copy username and copy password buttons in the details pane and as quick
+  actions in the entry row; a short confirmation toast appears. There are no timers and no clipboard clearing (D-06).
 - The password is masked; a toggle shows and hides it. It is masked again when
   another entry is selected. Nothing hides it automatically by time (D-06).
+
+**Entry row quick actions (D-23):** Open URL, Copy username and Copy
+password appear on an entry row when the pointer hovers it or keyboard focus is
+inside it.
+
+**Settings (D-20):** a Settings dialog from the header menu. The only setting
+for now is the Open all confirmation threshold. Settings are kept in the
+browser profile and are not included in the export file.
 
 **Search:**
 
