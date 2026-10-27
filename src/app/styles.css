@@ -207,6 +207,11 @@ textarea {
   box-shadow: 0 0 0 1px var(--accent);
 }
 
+/* The browser default placeholder gray is below 4.5:1 on the dark surface */
+.search__input::placeholder {
+  color: var(--text-muted);
+}
+
 .search__input:disabled {
   opacity: 0.5;
 }

@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–3 are done (C1–C3 closed). The next task is 4.1.
+Status: stages 1–3 are done (C1–C3 closed). Task 4.1 is done. The next task is 4.2.
 
 ## Rules
 
@@ -92,7 +92,7 @@ Status: stages 1–3 are done (C1–C3 closed). The next task is 4.1.
 
 ## 4. Finish
 
-- [ ] 4.1. Quality pass: keyboard navigation and focus order, contrast in both
+- [x] 4.1. Quality pass: keyboard navigation and focus order, contrast in both
   themes, reduced motion, screenshots of the main states in light and dark
   themes reviewed against [design.md](design.md); fix findings.
 - [ ] 4.2. Packaging: pin the extension ID with a manifest `key` (D-12), final

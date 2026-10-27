@@ -49,6 +49,8 @@ const PAIRS: [foreground: string, backgrounds: string[], minimum: number][] = [
   ["text", SURFACES, 4.5],
   ["text-muted", SURFACES, 4.5],
   ["accent", ["bg", "surface"], 4.5],
+  // The focus ring and the selection bar also sit on list item backgrounds
+  ["accent", ["surface-hover", "surface-selected"], 3],
   ["danger", ["bg", "surface"], 4.5],
   ["accent-text", ["accent", "danger"], 4.5],
   ["success", ["surface"], 3],
