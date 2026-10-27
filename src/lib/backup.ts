@@ -42,7 +42,7 @@ function localDay(date: Date): string {
 }
 
 export function exportFileName(date: Date): string {
-  return `use-config-${localDay(date)}.json`;
+  return `clay-${localDay(date)}.json`;
 }
 
 // The raw stored value is kept as it is for diagnostics (D-11); it is not an
@@ -52,7 +52,7 @@ export function serializeRaw(raw: unknown): string {
 }
 
 export function rawExportFileName(date: Date): string {
-  return `use-config-raw-${localDay(date)}.json`;
+  return `clay-raw-${localDay(date)}.json`;
 }
 
 function failure(
@@ -88,7 +88,7 @@ export function parseImport(text: string): ImportResult {
   }
 
   if (!isRecord(file) || file.format !== EXPORT_FORMAT) {
-    return failure("wrong-format", "The file is not a Use Config export.");
+    return failure("wrong-format", "The file is not a Clay export.");
   }
 
   const { schemaVersion, exportedAt } = file;
@@ -98,7 +98,7 @@ export function parseImport(text: string): ImportResult {
   ) {
     return failure(
       "newer-version",
-      "The file was created by a newer version of Use Config. Update the extension to import it.",
+      "The file was created by a newer version of Clay. Update the extension to import it.",
     );
   }
 

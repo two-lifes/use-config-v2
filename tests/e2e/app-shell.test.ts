@@ -20,7 +20,7 @@ test("first run shows the welcome state with the plaintext note", async ({
   const page = await openTab(context, extensionId);
 
   await expect(
-    page.getByRole("heading", { name: "Welcome to Use Config" }),
+    page.getByRole("heading", { name: "Welcome to Clay" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Create topic" }),
@@ -37,7 +37,7 @@ test("a catalog with topics shows the three panes", async ({
 }) => {
   const page = await openTab(context, extensionId);
   await expect(
-    page.getByRole("heading", { name: "Welcome to Use Config" }),
+    page.getByRole("heading", { name: "Welcome to Clay" }),
   ).toBeVisible();
 
   await page.evaluate(() =>
@@ -52,7 +52,7 @@ test("a catalog with topics shows the three panes", async ({
     await expect(page.getByRole("region", { name })).toBeVisible();
   }
   await expect(
-    page.getByRole("heading", { name: "Welcome to Use Config" }),
+    page.getByRole("heading", { name: "Welcome to Clay" }),
   ).toHaveCount(0);
 
   await page.reload();
@@ -71,7 +71,7 @@ test("invalid stored data shows an error and is not overwritten", async ({
     page.getByRole("heading", { name: "Stored data is invalid" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Welcome to Use Config" }),
+    page.getByRole("heading", { name: "Welcome to Clay" }),
   ).toHaveCount(0);
   const stored = await page.evaluate(async () => {
     const items = await chrome.storage.local.get("catalog");
@@ -101,7 +101,7 @@ test("a change made in another tab appears without reloading", async ({
 }) => {
   const watcher = await openTab(context, extensionId);
   await expect(
-    watcher.getByRole("heading", { name: "Welcome to Use Config" }),
+    watcher.getByRole("heading", { name: "Welcome to Clay" }),
   ).toBeVisible();
 
   const editor = await openTab(context, extensionId);

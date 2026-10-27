@@ -172,7 +172,7 @@ test("About shows the version and the plaintext storage note", async ({
   );
 
   await choose(page, "About");
-  const about = page.getByRole("dialog", { name: "About Use Config" });
+  const about = page.getByRole("dialog", { name: "About Clay" });
   await expect(about).toContainText(`Version ${version}`);
   await expect(about).toContainText(
     "Your data is stored unencrypted in this browser profile.",
@@ -204,7 +204,7 @@ test("Export warns about readable passwords and downloads the whole catalog", as
     const pad = (value: number) => String(value).padStart(2, "0");
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   });
-  expect(file.suggestedFilename()).toBe(`use-config-${today}.json`);
+  expect(file.suggestedFilename()).toBe(`clay-${today}.json`);
   const text = await readFile(await file.path(), "utf8");
   // Indented with two spaces (technical.md)
   expect(text).toContain('\n  "format": "use-config-export"');
@@ -236,7 +236,7 @@ test("export followed by import into an empty catalog restores identical data", 
   await page.evaluate(() => chrome.storage.local.remove("catalog"));
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Welcome to Use Config" }),
+    page.getByRole("heading", { name: "Welcome to Clay" }),
   ).toBeVisible();
 
   await importFile(page, exported);
@@ -297,12 +297,12 @@ const REJECTED: {
   {
     title: "a file of another format",
     contents: () => JSON.stringify({ topics: [], entries: [] }),
-    text: ["The file is not a Use Config export."],
+    text: ["The file is not a Clay export."],
   },
   {
     title: "a newer format version",
     contents: () => exportFile(BACKUP, { schemaVersion: 2 }),
-    text: ["created by a newer version of Use Config"],
+    text: ["created by a newer version of Clay"],
   },
   {
     title: "a broken reference and an invalid field",
@@ -432,7 +432,7 @@ test("invalid stored data offers the raw data and is never overwritten", async (
   await page.getByRole("button", { name: "Download raw data" }).click();
   const file = await download;
   expect(file.suggestedFilename()).toMatch(
-    /^use-config-raw-\d{4}-\d{2}-\d{2}\.json$/,
+    /^clay-raw-\d{4}-\d{2}-\d{2}\.json$/,
   );
   expect(JSON.parse(await readFile(await file.path(), "utf8"))).toEqual(
     invalid,

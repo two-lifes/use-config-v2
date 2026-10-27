@@ -19,7 +19,7 @@ export async function openOrFocus(): Promise<void> {
 
 chrome.action.onClicked.addListener(() => {
   openOrFocus().catch((error: unknown) => {
-    console.error("Failed to open the Use Config tab", error);
+    console.error("Failed to open the Clay tab", error);
   });
 });
 

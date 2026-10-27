@@ -94,7 +94,7 @@ As a user, I find an entry without remembering its topic.
 
 ## US-09. Export
 
-- Export downloads `use-config-YYYY-MM-DD.json` containing all topics and
+- Export downloads `clay-YYYY-MM-DD.json` containing all topics and
   entries, including passwords, in the format from
   [technical.md](technical.md#export-file-format).
 - The dialog warns that the file contains readable passwords.

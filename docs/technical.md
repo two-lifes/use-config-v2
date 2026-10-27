@@ -46,8 +46,13 @@ without a browser. The UI talks to storage only through `src/storage`.
 - `permissions: ["storage", "favicon"]` (D-13). No host permissions, no `tabs`,
   no content scripts.
 - `key`: a fixed public key so that the unpacked extension keeps the same ID
-  when its folder moves (D-12). Generate the key pair once at task 4.2; only
-  the public key goes into the manifest, and the private key is not committed.
+  when its folder moves (D-12). The pinned ID is
+  `eicjdlcomdndfepnpfpgpjloecpnkkpj` (the first 32 hex digits of the SHA-256 of
+  the key, mapped to `a`–`p`); an end-to-end test checks it. Only the public
+  key is in the manifest; the private key is not committed and is kept by the
+  user outside the repository. It is needed only to pack a `.crx` with the same
+  ID, not to load the extension unpacked. Changing or removing `key` changes
+  the ID, and the new ID starts with empty storage.
 
 ### Toolbar icon behavior
 
@@ -135,7 +140,7 @@ entry name, then topic name.
 
 A missing `catalog` key means an empty catalog. Any other value that fails
 validation is an invalid state (D-11): it is not overwritten, and the UI offers
-a raw export of the stored value (`use-config-raw-YYYY-MM-DD.json`, the stored
+a raw export of the stored value (`clay-raw-YYYY-MM-DD.json`, the stored
 value as JSON indented with two spaces; it is not an export file and cannot be
 imported) and an import of a backup file after confirmation.
 
@@ -184,7 +189,7 @@ Implemented in `src/storage/repository.ts`.
 ```
 
 - `topics` and `entries` follow data schema v1.
-- File name: `use-config-YYYY-MM-DD.json` (local date), UTF-8, indented with two
+- File name: `clay-YYYY-MM-DD.json` (local date), UTF-8, indented with two
   spaces. Downloaded through a `Blob` and an `<a download>` link; no
   `downloads` permission.
 - Import limit: 10 MB file size (10 × 1024 × 1024 bytes, like the

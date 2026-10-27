@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Use Config",
-  "version": "0.1.0",
+  "name": "Clay",
+  "version": "1.0.0",
   "description": "Catalog of websites and credentials grouped by topic.",
   "minimum_chrome_version": "120",
   "background": {
@@ -9,7 +9,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Use Config",
+    "default_title": "Clay",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
@@ -21,5 +21,6 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage", "favicon"]
+  "permissions": ["storage", "favicon"],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy/IECyaibip/xg9qlGvO29gIVxJT4T+fkLZvfMJVixeB67m1FXyckds/dYNoNZXwFhgFhaqpX3G3V2VYRfgOJUSG+c8gHmbxtU7glCugQg2JvGBnzxPWuFamMFMOwofo7KBD2CKziL/3JWXmn+2x5sWzho8MLh/gXQWwzb756XbbkK7156rsOgpuoWc2Y9rTtXG3pmbRjCEWwzH73bVy/gsCXTdqRwFxyhposhJL81ZJCmfCtEKACLEDRRSp92yhI722ll0myOYApMzIen0ZCy5IeL5ZPOo3pzUnA/2fPES2ySGBpOF/k062B5cqVkZ3fXLHGTr+8YlPw6+H0wzanQIDAQAB"
 }

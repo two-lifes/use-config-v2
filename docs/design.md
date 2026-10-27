@@ -63,7 +63,7 @@ implementing and adjust the values if needed.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────┐
-│ Use Config        [ Search all entries…        Ctrl+F ]     ⋯    │  header 56px
+│ Clay              [ Search all entries…        Ctrl+F ]     ⋯    │  header 56px
 ├──────────────┬────────────────────────┬──────────────────────────┤
 │ Topics    +  │ My VPS       Open all + │ [icon] Hetzner Console   │
 │              │                        │ https://console…   Open  │

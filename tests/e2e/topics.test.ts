@@ -252,7 +252,7 @@ test("deleting an empty topic asks a simple confirmation", async ({
 
   // The last topic is gone, so the welcome state returns
   await expect(
-    page.getByRole("heading", { name: "Welcome to Use Config" }),
+    page.getByRole("heading", { name: "Welcome to Clay" }),
   ).toBeVisible();
   expect((await storedCatalog(page)).topics).toEqual([]);
 });

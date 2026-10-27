@@ -38,8 +38,11 @@ All decisions below were made on 2026-10-26.
 These do not block the start of work; resolve them before the task that depends
 on them.
 
-1. Final product name and toolbar icon (task 4.2). The working name is
-   **Use Config**.
+1. ~~Final product name and toolbar icon (task 4.2).~~ Resolved 2026-10-27 by
+   the user: the product name is **Clay**; the icon is the white `KeyRound`
+   glyph from `lucide-react` on a rounded square in the accent color
+   (`#4f46e5`). Export files are named `clay-…`; the `format` marker
+   `use-config-export` of schema v1 is unchanged.
 
 D-02 and D-09–D-15 were confirmed by the user on 2026-10-26 after being
 proposed by the agent.

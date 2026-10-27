@@ -563,7 +563,7 @@ function Welcome({ onCreateTopic }: { onCreateTopic: () => void }) {
     <section className="empty-state" aria-labelledby="welcome-title">
       <FolderPlus size={32} />
       <h2 className="welcome__title" id="welcome-title">
-        Welcome to Use Config
+        Welcome to Clay
       </h2>
       <p className="empty-state__text">
         Group the websites you use into topics, with their sign-in details.

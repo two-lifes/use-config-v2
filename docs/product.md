@@ -107,7 +107,7 @@ the first topic. The plaintext storage note is shown here once.
 **Export and import (D-07):**
 
 - Export saves the whole catalog to one JSON file
-  (`use-config-YYYY-MM-DD.json`). The dialog warns that the file contains
+  (`clay-YYYY-MM-DD.json`). The dialog warns that the file contains
   readable passwords.
 - Import reads such a file, validates it completely and then asks to replace
   the current catalog, showing the numbers of topics and entries in the file

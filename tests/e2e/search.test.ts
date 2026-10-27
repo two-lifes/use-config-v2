@@ -186,7 +186,7 @@ test("Ctrl+F focuses search and Escape clears it", async ({
   await expect(entryNames(page)).toHaveText(["Router"]);
 
   // Ctrl+F again selects the query so typing replaces it
-  await page.getByRole("heading", { name: "Use Config" }).click();
+  await page.getByRole("heading", { name: "Clay" }).click();
   await page.keyboard.press("ControlOrMeta+f");
   await page.keyboard.type("mai");
   await expect(searchField(page)).toHaveValue("mai");
@@ -334,6 +334,6 @@ test("search is disabled while there are no topics", async ({
   extensionId,
 }) => {
   const page = await openTab(context, extensionId);
-  await expect(page.getByText("Welcome to Use Config")).toBeVisible();
+  await expect(page.getByText("Welcome to Clay")).toBeVisible();
   await expect(searchField(page)).toBeDisabled();
 });

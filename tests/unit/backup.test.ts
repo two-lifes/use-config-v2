@@ -105,10 +105,10 @@ test.describe("serializeExport", () => {
 test.describe("exportFileName", () => {
   test("uses the local date with leading zeros", () => {
     expect(exportFileName(new Date(2026, 0, 5, 23, 59))).toBe(
-      "use-config-2026-01-05.json",
+      "clay-2026-01-05.json",
     );
     expect(exportFileName(new Date(2026, 11, 31, 0, 0))).toBe(
-      "use-config-2026-12-31.json",
+      "clay-2026-12-31.json",
     );
   });
 });
@@ -119,7 +119,7 @@ test.describe("raw data export", () => {
     expect(JSON.parse(serializeRaw(raw))).toEqual(raw);
     expect(serializeRaw(42)).toBe("42");
     expect(rawExportFileName(new Date(2026, 0, 5, 23, 59))).toBe(
-      "use-config-raw-2026-01-05.json",
+      "clay-raw-2026-01-05.json",
     );
   });
 
@@ -190,7 +190,7 @@ test.describe("parseImport", () => {
       expect(parse(value)).toEqual({
         ok: false,
         error: "wrong-format",
-        message: "The file is not a Use Config export.",
+        message: "The file is not a Clay export.",
         problems: [],
       });
     }
@@ -202,7 +202,7 @@ test.describe("parseImport", () => {
         ok: false,
         error: "newer-version",
         message:
-          "The file was created by a newer version of Use Config. Update the extension to import it.",
+          "The file was created by a newer version of Clay. Update the extension to import it.",
         problems: [],
       });
     }

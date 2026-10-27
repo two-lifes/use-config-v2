@@ -195,7 +195,7 @@ function BackupDialogs({
         <Dialog
           key={key}
           open={open}
-          title="About Use Config"
+          title="About Clay"
           onCancel={close}
           actions={
             <Button variant="primary" onClick={close}>
