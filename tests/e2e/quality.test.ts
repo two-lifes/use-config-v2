@@ -189,6 +189,54 @@ for (const colorScheme of ["light", "dark"] as const) {
   });
 }
 
+for (const colorScheme of ["light", "dark"] as const) {
+  test(`panes, dialogs and textareas have thin themed scrollbars in the ${colorScheme} theme`, async ({
+    context,
+    extensionId,
+  }) => {
+    const page = await openTab(context, extensionId);
+    await seed(page, { Work: ["One"] });
+    await page.emulateMedia({ colorScheme });
+    await selectEntry(page, "Work", "One");
+    const details = page.getByRole("region", { name: "Details" });
+    const scrollbars = () =>
+      page.evaluate(() => {
+        const probe = document.createElement("span");
+        probe.style.color = "var(--border-input)";
+        document.body.append(probe);
+        const thumb = getComputedStyle(probe).color;
+        probe.remove();
+        const elements = [
+          ...document.querySelectorAll(".pane__body, dialog[open], textarea"),
+        ];
+        return {
+          thumb,
+          count: elements.length,
+          values: elements.map((element) => {
+            const style = getComputedStyle(element);
+            return [style.scrollbarWidth, style.scrollbarColor];
+          }),
+        };
+      });
+    const expectThin = async (count: number) => {
+      const styles = await scrollbars();
+      expect(styles.count).toBe(count);
+      for (const value of styles.values) {
+        expect(value).toEqual(["thin", `${styles.thumb} rgba(0, 0, 0, 0)`]);
+      }
+    };
+
+    // Three pane bodies and the dialog
+    await details.getByRole("button", { name: "Delete", exact: true }).click();
+    await expectThin(4);
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    // Three pane bodies and the form's two textareas
+    await details.getByRole("button", { name: "Edit" }).click();
+    await expectThin(5);
+  });
+}
+
 test("reduced motion turns off transitions and animations", async ({
   context,
   extensionId,

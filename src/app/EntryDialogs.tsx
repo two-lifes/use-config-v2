@@ -66,6 +66,9 @@ interface MoveEntryDialogProps {
   open: boolean;
   repository: CatalogRepository;
   entry: Entry;
+  // Missing only when another tab deleted the topic while the dialog is open;
+  // moving then fails with the usual error
+  currentTopic: Topic | undefined;
   // Sorted by name, without the entry's current topic; never empty
   targets: Topic[];
   onDone: () => void;
@@ -76,6 +79,7 @@ export function MoveEntryDialog({
   open,
   repository,
   entry,
+  currentTopic,
   targets,
   onDone,
   onCancel,
@@ -121,6 +125,12 @@ export function MoveEntryDialog({
       }
     >
       <form id={formId} className="dialog__form" onSubmit={submit}>
+        {currentTopic && (
+          <dl className="field">
+            <dt className="field__label">Current topic</dt>
+            <dd className="field__value">{currentTopic.name}</dd>
+          </dl>
+        )}
         <div className="field">
           <label className="field__label" htmlFor={selectId}>
             Topic

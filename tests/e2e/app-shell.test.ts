@@ -95,6 +95,38 @@ test("the page follows the light and dark color scheme", async ({
   expect(await background()).toBe("rgb(17, 17, 19)");
 });
 
+test("the header has the logo and name on the left, search after them and the menu at the right", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  await page.setViewportSize({ width: 1440, height: 800 });
+  const box = async (selector: string) => {
+    const result = await page.locator(selector).boundingBox();
+    if (!result) throw new Error(`${selector} is not rendered`);
+    return result;
+  };
+
+  const logo = await box(".header__logo");
+  const title = await box(".header__title");
+  const search = await box(".search");
+  const menu = await box(".header__menu");
+  // The toolbar icon file is loaded, not a broken image
+  await expect
+    .poll(() =>
+      page
+        .locator(".header__logo")
+        .evaluate((image: HTMLImageElement) => image.naturalWidth),
+    )
+    .toBe(48);
+  expect([logo.width, logo.height]).toEqual([24, 24]);
+  expect(logo.x).toBeLessThan(title.x);
+  // The search field follows the name with the header gap; it is not centered
+  expect(search.x - (title.x + title.width)).toBeCloseTo(16, 0);
+  expect(search.width).toBe(360);
+  expect(1440 - (menu.x + menu.width)).toBeCloseTo(16, 0);
+});
+
 test("a change made in another tab appears without reloading", async ({
   context,
   extensionId,

@@ -521,6 +521,9 @@ function CatalogDialogs({
           open={open}
           repository={repository}
           entry={value.entry}
+          currentTopic={topics.find(
+            (topic) => topic.id === value.entry.topicId,
+          )}
           targets={topics.filter((topic) => topic.id !== value.entry.topicId)}
           onDone={() => {
             onEntryMoved();

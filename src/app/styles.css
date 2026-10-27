@@ -122,6 +122,17 @@ textarea {
   background: var(--surface);
 }
 
+.header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.header__logo {
+  width: 24px;
+  height: 24px;
+}
+
 .header__title {
   font-size: var(--text-title);
   font-weight: 600;
@@ -129,6 +140,14 @@ textarea {
 
 .header__menu {
   margin-left: auto;
+}
+
+/* Thin themed scrollbars (D-24) */
+.pane__body,
+.dialog,
+textarea.field__control {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-input) transparent;
 }
 
 /* Menu */
@@ -179,9 +198,7 @@ textarea {
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1;
-  max-width: 480px;
-  margin: 0 auto;
+  flex: 0 0 360px;
 }
 
 .search__icon {
@@ -528,6 +545,10 @@ textarea {
   gap: var(--space-2);
 }
 
+.entry-form {
+  max-width: 560px;
+}
+
 .entry-form__title {
   font-size: var(--text-title);
   font-weight: 600;
@@ -601,6 +622,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  margin: 0;
 }
 
 .field__label {
@@ -617,6 +639,18 @@ textarea {
   border-radius: var(--radius-control);
   background: var(--surface);
   transition: border-color var(--motion);
+}
+
+/* A read-only value whose text lines up with a select below it: the same
+   height and vertical centering, the select's border and padding plus the 4 px
+   inner padding Chromium adds to the select's text */
+.field__value {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  margin: 0;
+  padding: 0 calc(var(--space-3) + 5px);
+  overflow-wrap: anywhere;
 }
 
 .field__control:focus-visible {

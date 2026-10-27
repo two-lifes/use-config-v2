@@ -10,7 +10,7 @@ Requirements and design: [docs/product.md](docs/product.md),
 ## Requirements
 
 - Node.js 24 and npm (the versions the project is tested with).
-- Google Chrome 120 or later.
+- Google Chrome 121 or later.
 
 ## Build
 

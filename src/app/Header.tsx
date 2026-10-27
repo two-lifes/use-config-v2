@@ -17,7 +17,10 @@ const shortcut = navigator.userAgent.includes("Mac") ? "⌘F" : "Ctrl+F";
 export function Header({ query = "", onQueryChange, menu }: HeaderProps) {
   return (
     <header className="header">
-      <h1 className="header__title">Clay</h1>
+      <div className="header__brand">
+        <img className="header__logo" src="icons/icon-48.png" alt="" />
+        <h1 className="header__title">Clay</h1>
+      </div>
       <SearchField query={query} onQueryChange={onQueryChange} />
       <div className="header__menu">
         <Menu

@@ -4,8 +4,8 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: the MVP (stages 1–4, C1–C4) is done. Stage 5 (improvements) is
-planned; the next task is 5.1.
+Status: the MVP (stages 1–4, C1–C4) is done. Stage 5 (improvements) is in
+progress: 5.1 is done; the next task is 5.2.
 
 ## Rules
 
@@ -116,7 +116,7 @@ planned; the next task is 5.1.
 
 Requested by the user on 2026-10-27 after the MVP; decisions D-19–D-24.
 
-- [ ] 5.1. Visual fixes from [design.md](design.md): the entry form column at
+- [x] 5.1. Visual fixes from [design.md](design.md): the entry form column at
   most 560 px wide; the header with the logo, the name and the search field
   right after the name; the current topic row in the Move dialog aligned with
   the select; thin themed scrollbars and `minimum_chrome_version` 121 (D-24,

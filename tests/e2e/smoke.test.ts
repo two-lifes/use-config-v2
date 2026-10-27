@@ -33,3 +33,15 @@ test("the extension ID is pinned by the manifest key", async ({
   expect(idFromKey).toBe(PINNED_EXTENSION_ID);
   expect(extensionId).toBe(PINNED_EXTENSION_ID);
 });
+
+// scrollbar-width and scrollbar-color need Chrome 121 (D-24)
+test("the manifest requires Chrome 121", async () => {
+  const manifest = JSON.parse(
+    await readFile(
+      path.resolve(import.meta.dirname, "../../dist/manifest.json"),
+      "utf8",
+    ),
+  ) as { minimum_chrome_version: string };
+
+  expect(manifest.minimum_chrome_version).toBe("121");
+});

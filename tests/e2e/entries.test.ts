@@ -393,6 +393,105 @@ test("an entry moves to another topic and stays there after reload", async ({
   expect((await storedEntry(page, "Mover")).topicId).toBe(gamma?.id);
 });
 
+// Where the text is drawn inside a box of the page: the first column and the
+// vertical middle of the pixels that differ from the box's background
+async function textInk(page: Page, selector: string) {
+  const box = await page.locator(selector).boundingBox();
+  if (!box) throw new Error(`${selector} is not rendered`);
+  // The inset skips the border and the focus ring
+  const clip = {
+    x: box.x + 3,
+    y: box.y + 3,
+    width: 80,
+    height: box.height - 6,
+  };
+  const image = (await page.screenshot({ clip })).toString("base64");
+  const ink = await page.evaluate(async (image) => {
+    const element = new Image();
+    element.src = `data:image/png;base64,${image}`;
+    await element.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = element.width;
+    canvas.height = element.height;
+    const context = canvas.getContext("2d")!;
+    context.drawImage(element, 0, 0);
+    const { data, width, height } = context.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
+    const sum = (x: number, y: number) => {
+      const i = (y * width + x) * 4;
+      return data[i] + data[i + 1] + data[i + 2];
+    };
+    // The middle of the left edge is padding; the corners may be rounded border
+    const background = sum(0, Math.floor(height / 2));
+    let left = width;
+    let top = height;
+    let bottom = -1;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (Math.abs(sum(x, y) - background) > 150) {
+          left = Math.min(left, x);
+          top = Math.min(top, y);
+          bottom = Math.max(bottom, y);
+        }
+      }
+    }
+    return { left, middle: (top + bottom) / 2 };
+  }, image);
+  return {
+    left: clip.x + ink.left,
+    middle: clip.y + ink.middle - box.y,
+  };
+}
+
+test("the Move dialog shows the current topic aligned with the select", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  // Names with the same first letter make the text edges comparable
+  await seed(page, { Beta: [], Bravo: [input("Mover")] });
+  await selectTopic(page, "Bravo");
+  await selectEntry(page, "Mover");
+  await details(page).getByRole("button", { name: "Move" }).click();
+  const dialog = page.getByRole("dialog", { name: "Move entry “Mover”" });
+
+  await expect(dialog.getByRole("term")).toHaveText("Current topic");
+  await expect(dialog.getByRole("definition")).toHaveText("Bravo");
+  await expect(dialog.getByLabel("Topic")).toHaveValue(/.+/);
+  for (const colorScheme of ["light", "dark"] as const) {
+    // Without the opening animation the boxes do not move between measurements
+    await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+    const current = await textInk(page, "dialog .field__value");
+    const select = await textInk(page, "dialog select");
+    expect(Math.abs(current.left - select.left)).toBeLessThanOrEqual(1);
+    expect(Math.abs(current.middle - select.middle)).toBeLessThanOrEqual(1);
+  }
+});
+
+test("the entry form is a left-aligned column at most 560 px wide", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await seed(page, { Work: [input("Wide")] });
+  await selectEntry(page, "Wide");
+  await details(page).getByRole("button", { name: "Edit" }).click();
+
+  const pane = await details(page).boundingBox();
+  const form = await details(page).locator(".entry-form").boundingBox();
+  const name = await field(page, "Name").boundingBox();
+  if (!pane || !form || !name) throw new Error("The form is not rendered");
+  expect(pane.width).toBeGreaterThan(600);
+  expect(form.width).toBe(560);
+  expect(form.x).toBe(pane.x + 1);
+  expect(name.width).toBe(560 - 2 * 16);
+});
+
 test("Move is disabled when there is no other topic", async ({
   context,
   extensionId,
