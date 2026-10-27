@@ -33,13 +33,26 @@ function twoDigits(value: number): string {
   return String(value).padStart(2, "0");
 }
 
-export function exportFileName(date: Date): string {
-  const day = [
+function localDay(date: Date): string {
+  return [
     date.getFullYear(),
     twoDigits(date.getMonth() + 1),
     twoDigits(date.getDate()),
   ].join("-");
-  return `use-config-${day}.json`;
+}
+
+export function exportFileName(date: Date): string {
+  return `use-config-${localDay(date)}.json`;
+}
+
+// The raw stored value is kept as it is for diagnostics (D-11); it is not an
+// export file and cannot be imported.
+export function serializeRaw(raw: unknown): string {
+  return JSON.stringify(raw, null, 2);
+}
+
+export function rawExportFileName(date: Date): string {
+  return `use-config-raw-${localDay(date)}.json`;
 }
 
 function failure(

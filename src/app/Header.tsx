@@ -1,25 +1,50 @@
-import { Search } from "lucide-react";
+import { Download, Info, Ellipsis, Search, Upload } from "lucide-react";
 import { useEffect, useRef } from "react";
+import type { BackupActions } from "./BackupDialogs";
+import { Menu } from "./components/Menu";
 
 interface HeaderProps {
   // Without a handler the search field is shown disabled (loading, error and
   // welcome states have nothing to search)
   query?: string;
   onQueryChange?: (query: string) => void;
+  // Without actions (while loading) the menu button is shown disabled
+  menu?: BackupActions;
 }
 
 const shortcut = navigator.userAgent.includes("Mac") ? "⌘F" : "Ctrl+F";
 
-export function Header({ query = "", onQueryChange }: HeaderProps) {
+export function Header({ query = "", onQueryChange, menu }: HeaderProps) {
   return (
     <header className="header">
       <h1 className="header__title">Use Config</h1>
       <SearchField query={query} onQueryChange={onQueryChange} />
+      <div className="header__menu">
+        <Menu
+          label="Menu"
+          icon={Ellipsis}
+          items={
+            menu && [
+              {
+                label: "Export",
+                icon: Download,
+                onSelect: () => menu.startExport?.(),
+                disabled: !menu.startExport,
+              },
+              { label: "Import", icon: Upload, onSelect: menu.startImport },
+              { label: "About", icon: Info, onSelect: menu.showAbout },
+            ]
+          }
+        />
+      </div>
     </header>
   );
 }
 
-function SearchField({ query, onQueryChange }: HeaderProps) {
+function SearchField({
+  query,
+  onQueryChange,
+}: Pick<HeaderProps, "query" | "onQueryChange">) {
   const ref = useRef<HTMLInputElement>(null);
   const enabled = onQueryChange !== undefined;
 

@@ -68,7 +68,7 @@ test("invalid stored data shows an error and is not overwritten", async ({
   await page.reload();
 
   await expect(
-    page.getByText("Stored data could not be loaded."),
+    page.getByRole("heading", { name: "Stored data is invalid" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Welcome to Use Config" }),
@@ -93,4 +93,26 @@ test("the page follows the light and dark color scheme", async ({
 
   await page.emulateMedia({ colorScheme: "dark" });
   expect(await background()).toBe("rgb(17, 17, 19)");
+});
+
+test("a change made in another tab appears without reloading", async ({
+  context,
+  extensionId,
+}) => {
+  const watcher = await openTab(context, extensionId);
+  await expect(
+    watcher.getByRole("heading", { name: "Welcome to Use Config" }),
+  ).toBeVisible();
+
+  const editor = await openTab(context, extensionId);
+  await editor.getByRole("button", { name: "Create topic" }).click();
+  const dialog = editor.getByRole("dialog", { name: "New topic" });
+  await dialog.getByLabel("Name").fill("Shared");
+  await dialog.getByRole("button", { name: "Create" }).click();
+
+  await expect(
+    watcher
+      .getByRole("region", { name: "Topics" })
+      .locator(".topic-list__name"),
+  ).toHaveText(["Shared"]);
 });

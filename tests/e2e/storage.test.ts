@@ -1,4 +1,5 @@
 import type { BrowserContext, Page } from "@playwright/test";
+import type { StoredCatalog } from "../../src/lib/model";
 import type { EntryInput } from "../../src/lib/validation";
 import type { TestHook } from "../../src/storage/repository";
 import { expect, test } from "./fixtures";
@@ -161,6 +162,64 @@ test("a failed write returns an error and keeps the saved catalog", async ({
   const result = await createTopic(page, "Personal");
 
   expect(result).toMatchObject({ ok: false, error: { kind: "write-failed" } });
+  expect(await storedValue(page)).toEqual(before);
+});
+
+test("replace writes a whole catalog over a valid or an invalid state", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  idOf(await createTopic(page, "Old"));
+  const replacement: StoredCatalog = {
+    schemaVersion: 1,
+    topics: [
+      {
+        id: "t1",
+        name: "New",
+        createdAt: "2026-10-26T12:00:00.000Z",
+        updatedAt: "2026-10-26T12:00:00.000Z",
+      },
+    ],
+    entries: [],
+  };
+
+  const replaced = await page.evaluate(
+    (catalog) => useConfigTest.repository.replace(catalog),
+    replacement,
+  );
+  expect(replaced).toMatchObject({ ok: true });
+  expect(await storedValue(page)).toEqual(replacement);
+
+  await page.evaluate(() => chrome.storage.local.set({ catalog: 42 }));
+  const recovered = await page.evaluate(
+    (catalog) => useConfigTest.repository.replace(catalog),
+    replacement,
+  );
+  expect(recovered).toMatchObject({ ok: true });
+  expect(await storedValue(page)).toEqual(replacement);
+});
+
+test("replace rejects an invalid catalog and keeps the stored one", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openTab(context, extensionId);
+  idOf(await createTopic(page, "Work"));
+  const before = await storedValue(page);
+
+  const result = await page.evaluate(() =>
+    useConfigTest.repository.replace({
+      schemaVersion: 1,
+      topics: [],
+      entries: [{ id: "e1" }],
+    } as never),
+  );
+
+  expect(result).toMatchObject({
+    ok: false,
+    error: { kind: "invalid-result" },
+  });
   expect(await storedValue(page)).toEqual(before);
 });
 

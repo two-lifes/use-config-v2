@@ -1,9 +1,10 @@
 import type { LucideIcon } from "lucide-react";
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentProps } from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+// ComponentProps includes ref, which React 19 passes to function components
+interface ButtonProps extends ComponentProps<"button"> {
   variant?: Variant;
   icon?: LucideIcon;
 }
@@ -30,10 +31,7 @@ export function Button({
   );
 }
 
-interface IconButtonProps extends Omit<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  "children"
-> {
+interface IconButtonProps extends Omit<ComponentProps<"button">, "children"> {
   // Icon-only buttons need both a tooltip and an accessible name
   label: string;
   icon: LucideIcon;

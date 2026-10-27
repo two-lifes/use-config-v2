@@ -115,6 +115,8 @@ As a user, I find an entry without remembering its topic.
   previously saved data remains.
 - If stored data is invalid, the tab shows an error state, does not overwrite
   the data, and offers to download the raw stored data.
+- From the error state I can import a backup file; it replaces the stored data
+  only after I confirm.
 
 ## US-12. Several extension tabs
 

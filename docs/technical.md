@@ -135,7 +135,9 @@ entry name, then topic name.
 
 A missing `catalog` key means an empty catalog. Any other value that fails
 validation is an invalid state (D-11): it is not overwritten, and the UI offers
-a raw export of the stored value.
+a raw export of the stored value (`use-config-raw-YYYY-MM-DD.json`, the stored
+value as JSON indented with two spaces; it is not an export file and cannot be
+imported) and an import of a backup file after confirmation.
 
 When the schema changes, `schemaVersion` increases and a pure migration
 function in `src/lib` converts the previous version on load; until then only
@@ -156,6 +158,10 @@ Implemented in `src/storage/repository.ts`.
   the same tab and from different tabs are applied one after another.
 - An invalid stored catalog is never written over: `update` returns an
   `invalid-state` error and leaves the stored value as it is (D-11).
+- `replace(catalog)` validates a whole catalog and writes it in one write under
+  the same Web Lock, whatever is stored, including an invalid state. Only import
+  uses it, after the user confirms the replacement; D-11 forbids automatic
+  overwrites only. Errors are `invalid-result` and `write-failed`.
 - `subscribe()` uses `chrome.storage.local.onChanged` to refresh the UI when
   another tab changes data; the listener receives the same result as `load()`.
 - Write errors (for example, the 10 MB `chrome.storage.local` quota, which
@@ -191,7 +197,7 @@ Implemented in `src/storage/repository.ts`.
   missing topic; topic names repeat. These checks run in this order, and each
   of the first four stops the import with its own message. Validation problems
   are counted, and the message names the first problems found (at most 5).
-- A valid import replaces the stored catalog in one write.
+- A valid import replaces the stored catalog in one write (`replace`).
 - Serialization, the file name and import parsing are pure functions in
   `src/lib/backup.ts`; the caller passes the export time.
 

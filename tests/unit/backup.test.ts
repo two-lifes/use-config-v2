@@ -4,7 +4,9 @@ import {
   exportFileName,
   IMPORT_SIZE_LIMIT,
   parseImport,
+  rawExportFileName,
   serializeExport,
+  serializeRaw,
 } from "../../src/lib/backup";
 import type { Entry, StoredCatalog, Topic } from "../../src/lib/model";
 
@@ -108,6 +110,25 @@ test.describe("exportFileName", () => {
     expect(exportFileName(new Date(2026, 11, 31, 0, 0))).toBe(
       "use-config-2026-12-31.json",
     );
+  });
+});
+
+test.describe("raw data export", () => {
+  test("keeps the stored value as it is, under its own file name", () => {
+    const raw = { schemaVersion: 2, topics: "broken" };
+    expect(JSON.parse(serializeRaw(raw))).toEqual(raw);
+    expect(serializeRaw(42)).toBe("42");
+    expect(rawExportFileName(new Date(2026, 0, 5, 23, 59))).toBe(
+      "use-config-raw-2026-01-05.json",
+    );
+  });
+
+  test("is rejected by import", () => {
+    const raw = { schemaVersion: 1, topics: [], entries: [] };
+    expect(parseImport(serializeRaw(raw))).toMatchObject({
+      ok: false,
+      error: "wrong-format",
+    });
   });
 });
 

@@ -4,8 +4,8 @@ import type {
   UpdateError,
 } from "../storage/repository";
 
-// The full storage error states arrive with task 3.6 (US-11); until then the
-// form or dialog stays open and says why nothing was saved
+// The form or dialog stays open with the user's input and says why nothing
+// was saved (US-11)
 function updateErrorMessage(error: UpdateError): string {
   switch (error.kind) {
     case "not-found":

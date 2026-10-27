@@ -30,6 +30,13 @@ export type UpdateResult =
   | { ok: true; catalog: StoredCatalog; id: string }
   | { ok: false; error: UpdateError };
 
+export type ReplaceError =
+  | { kind: "invalid-result"; problems: string[] }
+  | { kind: "write-failed"; message: string };
+
+export type ReplaceResult =
+  { ok: true; catalog: StoredCatalog } | { ok: false; error: ReplaceError };
+
 export type CatalogOperation = (
   catalog: StoredCatalog,
   context: OperationContext,
@@ -38,6 +45,9 @@ export type CatalogOperation = (
 export interface CatalogRepository {
   load(): Promise<LoadResult>;
   update(operation: CatalogOperation): Promise<UpdateResult>;
+  // Import: replaces whatever is stored, also an invalid state, because the
+  // user confirms it explicitly (D-11 forbids only automatic overwrites)
+  replace(catalog: StoredCatalog): Promise<ReplaceResult>;
   subscribe(listener: (result: LoadResult) => void): () => void;
 }
 
@@ -108,8 +118,13 @@ async function readModifyWrite(
     };
   }
 
+  const written = await write(checked.catalog);
+  return written.ok ? { ...written, id: applied.id } : written;
+}
+
+async function write(catalog: StoredCatalog): Promise<ReplaceResult> {
   try {
-    await chrome.storage.local.set({ [STORAGE_KEY]: checked.catalog });
+    await chrome.storage.local.set({ [STORAGE_KEY]: catalog });
   } catch (error) {
     // For example the 10 MB quota; the stored catalog stays as it was
     return {
@@ -117,7 +132,18 @@ async function readModifyWrite(
       error: { kind: "write-failed", message: errorMessage(error) },
     };
   }
-  return { ok: true, catalog: checked.catalog, id: applied.id };
+  return { ok: true, catalog };
+}
+
+function replace(catalog: StoredCatalog): Promise<ReplaceResult> {
+  const checked = validateCatalog(catalog);
+  if (!checked.ok) {
+    return Promise.resolve({
+      ok: false,
+      error: { kind: "invalid-result", problems: checked.problems },
+    });
+  }
+  return write(checked.catalog);
 }
 
 export function createCatalogRepository(): CatalogRepository {
@@ -125,6 +151,9 @@ export function createCatalogRepository(): CatalogRepository {
     load: read,
     update: (operation) =>
       navigator.locks.request(LOCK_NAME, () => readModifyWrite(operation)),
+    // The lock keeps a replace from interleaving with an update in progress
+    replace: (catalog) =>
+      navigator.locks.request(LOCK_NAME, () => replace(catalog)),
     subscribe(listener) {
       const onChanged = (changes: {
         [key: string]: chrome.storage.StorageChange;

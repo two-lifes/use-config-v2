@@ -1,5 +1,13 @@
-import { FileText, FolderPlus, Lock, TriangleAlert } from "lucide-react";
+import {
+  Download,
+  FileText,
+  FolderPlus,
+  Lock,
+  TriangleAlert,
+  Upload,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { rawExportFileName, serializeRaw } from "../lib/backup";
 import {
   countEntries,
   entriesOfTopic,
@@ -9,9 +17,11 @@ import {
 import type { Entry, StoredCatalog, Topic } from "../lib/model";
 import type { CatalogRepository, LoadResult } from "../storage/repository";
 import { OPEN_ALL_CONFIRM_LIMIT, openUrl, openUrls } from "./actions";
+import { useBackup, type BackupActions } from "./BackupDialogs";
 import { Button } from "./components/Button";
 import { EmptyState } from "./components/EmptyState";
 import { ToastProvider, useToast } from "./components/Toast";
+import { downloadText } from "./download";
 import { EntriesPane, SearchResultsPane } from "./EntriesPane";
 import {
   DeleteEntryDialog,
@@ -65,6 +75,30 @@ function Workspace({
   state: LoadResult | null;
   repository: CatalogRepository;
 }) {
+  // The dialogs stay mounted when an import moves the tab out of the error state
+  const backup = useBackup(repository, state);
+
+  return (
+    <>
+      <WorkspaceContent
+        state={state}
+        repository={repository}
+        menu={backup.actions}
+      />
+      {backup.element}
+    </>
+  );
+}
+
+function WorkspaceContent({
+  state,
+  repository,
+  menu,
+}: {
+  state: LoadResult | null;
+  repository: CatalogRepository;
+  menu: BackupActions;
+}) {
   // Nothing is shown while loading so the welcome state does not flash
   if (!state)
     return (
@@ -75,21 +109,87 @@ function Workspace({
     );
 
   if (state.status !== "ok") {
-    // The full error state with the raw data export is task 3.6 (US-11)
     return (
       <>
-        <Header />
+        <Header menu={menu} />
         <main className="workspace workspace--single">
-          <EmptyState
-            icon={TriangleAlert}
-            text="Stored data could not be loaded."
-          />
+          <StoredDataError state={state} onImport={menu.startImport} />
         </main>
       </>
     );
   }
 
-  return <Catalog catalog={state.catalog} repository={repository} />;
+  return (
+    <Catalog catalog={state.catalog} repository={repository} menu={menu} />
+  );
+}
+
+// Shown problems, like the import message (technical.md)
+const MAX_SHOWN_PROBLEMS = 5;
+
+// The stored value is never overwritten automatically (D-11); the user can keep
+// a copy and replace it with a backup
+function StoredDataError({
+  state,
+  onImport,
+}: {
+  state: LoadResult & { status: "invalid" | "error" };
+  onImport: () => void;
+}) {
+  const showToast = useToast();
+  const downloadRaw = (raw: unknown) => {
+    try {
+      downloadText(rawExportFileName(new Date()), serializeRaw(raw));
+    } catch (error) {
+      console.error("Failed to download the raw data", error);
+      showToast("Could not download the raw data.", "error");
+    }
+  };
+
+  return (
+    <section className="empty-state" aria-labelledby="storage-error-title">
+      <TriangleAlert size={32} className="storage-error__icon" />
+      <h2 className="welcome__title" id="storage-error-title">
+        {state.status === "invalid"
+          ? "Stored data is invalid"
+          : "Stored data could not be read"}
+      </h2>
+      {state.status === "invalid" ? (
+        <>
+          <p className="empty-state__text">
+            It has not been changed. Download the raw data to keep a copy, or
+            replace it with a backup file.
+          </p>
+          <ul className="problem-list">
+            {state.problems
+              .slice(0, MAX_SHOWN_PROBLEMS)
+              .map((problem, index) => (
+                <li key={index}>{problem}</li>
+              ))}
+          </ul>
+        </>
+      ) : (
+        <p className="empty-state__text">
+          {state.message} Reload the tab to try again, or replace the data with
+          a backup file.
+        </p>
+      )}
+      <div className="storage-error__actions">
+        {state.status === "invalid" && (
+          <Button
+            variant="primary"
+            icon={Download}
+            onClick={() => downloadRaw(state.raw)}
+          >
+            Download raw data
+          </Button>
+        )}
+        <Button icon={Upload} onClick={onImport}>
+          Import backup
+        </Button>
+      </div>
+    </section>
+  );
 }
 
 type CatalogDialog =
@@ -106,9 +206,11 @@ type DetailsMode = "view" | "add" | "edit";
 function Catalog({
   catalog,
   repository,
+  menu,
 }: {
   catalog: StoredCatalog;
   repository: CatalogRepository;
+  menu: BackupActions;
 }) {
   const [selectedId, setSelectedId] = useState<string>();
   const [selectedEntryId, setSelectedEntryId] = useState<string>();
@@ -231,12 +333,18 @@ function Catalog({
     else openMany(urls);
   };
 
+  // An import replaces the entry being edited, so it asks first (D-09)
+  const catalogMenu: BackupActions = {
+    ...menu,
+    startImport: () => leaveForm(menu.startImport),
+  };
+
   return (
     <>
       {topics.length === 0 ? (
-        <Header />
+        <Header menu={catalogMenu} />
       ) : (
-        <Header query={query} onQueryChange={changeQuery} />
+        <Header query={query} onQueryChange={changeQuery} menu={catalogMenu} />
       )}
       {topics.length === 0 ? (
         <main className="workspace workspace--single">

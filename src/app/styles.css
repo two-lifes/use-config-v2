@@ -127,6 +127,54 @@ textarea {
   font-weight: 600;
 }
 
+.header__menu {
+  margin-left: auto;
+}
+
+/* Menu */
+
+.menu {
+  position: fixed;
+  inset: auto;
+  min-width: 160px;
+  margin: 0;
+  padding: var(--space-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pane);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.menu:popover-open {
+  animation: dialog-in var(--motion);
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 32px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  text-align: left;
+  transition: background-color var(--motion);
+}
+
+.menu__item:hover:not(:disabled),
+.menu__item:focus-visible {
+  background: var(--surface-hover);
+}
+
+.menu__item:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
 .search {
   position: relative;
   display: flex;
@@ -633,6 +681,21 @@ textarea.field__control {
   gap: var(--space-3);
 }
 
+.dialog__note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-secondary);
+}
+
+.problem-list {
+  padding-left: var(--space-5);
+  font-size: var(--text-secondary);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
 .dialog__error {
   color: var(--danger);
   font-size: var(--text-secondary);
@@ -713,4 +776,15 @@ textarea.field__control {
   align-items: center;
   gap: var(--space-2);
   font-size: var(--text-secondary);
+}
+
+/* Storage error */
+
+.storage-error__icon {
+  color: var(--danger);
+}
+
+.storage-error__actions {
+  display: flex;
+  gap: var(--space-2);
 }

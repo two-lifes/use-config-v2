@@ -4,7 +4,7 @@ Sources: [product.md](product.md), [user-stories.md](user-stories.md),
 [decisions.md](decisions.md), [technical.md](technical.md),
 [design.md](design.md).
 
-Status: stages 1–2 are done (C1, C2 closed); 3.1–3.5 are done. The next task is 3.6.
+Status: stages 1–3 are done (C1–C3 closed). The next task is 4.1.
 
 ## Rules
 
@@ -79,12 +79,16 @@ Status: stages 1–2 are done (C1, C2 closed); 3.1–3.5 are done. The next task
   names, empty state with Clear search (US-08).
 - [x] 3.5. Actions: open URL and additional URL, Open all with confirmation over
   10, copy username and password with toast, reveal toggle (US-06, US-07).
-- [ ] 3.6. Export and import UI: menu, warning, replace confirmation with
+- [x] 3.6. Export and import UI: menu, warning, replace confirmation with
   counts, error messages; storage error states in the UI (US-09, US-10,
   US-11).
 
-- [ ] **C3:** every story in [user-stories.md](user-stories.md) is implemented
+- [x] **C3:** every story in [user-stories.md](user-stories.md) is implemented
   and covered by passing end-to-end tests, except the parts marked as manual.
+  Closed 2026-10-27: Linux (WSL2), Node.js 24.22.1, Playwright 1.64.1 with its
+  bundled Chromium 156 (headless); `npm run check` passed (typecheck, lint,
+  format check, 104 unit tests, build, 68 end-to-end tests). The manual parts
+  (US-04 leave-page prompt, a real export file in Chrome) remain for 4.3.
 
 ## 4. Finish
 

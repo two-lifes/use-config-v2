@@ -122,7 +122,8 @@ the first topic. The plaintext storage note is shown here once.
   previously saved data remains.
 - If stored data cannot be read or fails validation, the extension shows an
   error state and does not overwrite it; it offers to export the raw data for
-  diagnostics (D-11).
+  diagnostics (D-11) and to import a backup file, which replaces the data only
+  after confirmation.
 - Changes made in one open extension tab appear in other open extension tabs.
 
 ## 5. Out of scope for the MVP
